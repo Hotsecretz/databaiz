@@ -503,11 +503,33 @@ LOW: routine notices, appointments without controversy, procedural adjournments.
     <div class="set-card">
       <div class="sc-h">Sources &amp; schedule (config/sources.yaml)</div>
       <div class="sc-b">
-        <div class="set-row"><span class="grow"><b>Kenya Law</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Kenya Law')"></button></div>
-        <div class="set-row"><span class="grow"><b>Gazette notices</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Gazette')"></button></div>
-        <div class="set-row"><span class="grow"><b>Hansard</b> · daily 06:00 (V2)</span><button class="switch on" onclick="flip(this,'Hansard')"></button></div>
-        <div class="set-row"><span class="grow"><b>ODPP</b> · daily 06:00 (V2)</span><button class="switch on" onclick="flip(this,'ODPP')"></button></div>
-        <div class="set-row"><span class="grow"><b>ODPC</b> · daily 06:00 (V2)</span><button class="switch on" onclick="flip(this,'ODPC')"></button></div>
+        <!-- EXISTING — rename for clarity -->
+<div class="src"><div class="grow"><div class="nm">Kenya Law — Judgments & Regional Courts</div><div class="meta">Checked 06:02 · new docs 06:02</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Kenya Law')" title="Re-fetch now">↻</button></div>
+
+<div class="src"><div class="grow"><div class="nm">Kenya Gazette</div><div class="meta">Checked 06:02 · new docs 06:02</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Gazette')" title="Re-fetch now">↻</button></div>
+
+<!-- EXISTING — split into two -->
+<div class="src"><div class="grow"><div class="nm">Hansard — National Assembly</div><div class="meta">Checked 06:03 · nothing new for 2 days</div></div><span class="badge stale">Stale</span><button class="refetch" onclick="refetch(this,'Hansard NA')" title="Re-fetch now">↻</button></div>
+
+<!-- NEW -->
+<div class="src"><div class="grow"><div class="nm">Hansard — Senate</div><div class="meta">Checked 06:03 · new docs 06:03</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Hansard Senate')" title="Re-fetch now">↻</button></div>
+
+<!-- NEW -->
+<div class="src"><div class="grow"><div class="nm">Senate Bills</div><div class="meta">Checked 06:03 · new docs 06:03</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Senate Bills')" title="Re-fetch now">↻</button></div>
+
+<!-- NEW -->
+<div class="src"><div class="grow"><div class="nm">National Assembly Bills</div><div class="meta">Checked 06:03 · new docs 06:03</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'NA Bills')" title="Re-fetch now">↻</button></div>
+
+<!-- NEW -->
+<div class="src"><div class="grow"><div class="nm">Parliamentary Statement Tracker</div><div class="meta">Checked 06:03 · nothing new for 2 days</div></div><span class="badge stale">Stale</span><button class="refetch" onclick="refetch(this,'Statement Tracker')" title="Re-fetch now">↻</button></div>
+
+<!-- NEW — Auditor General has 4 sub-feeds, show as one row -->
+<div class="src"><div class="grow"><div class="nm">Auditor General Reports</div><div class="meta">4 feeds · national, county, specialised, special · Checked 06:04</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Auditor General')" title="Re-fetch now">↻</button></div>
+
+<!-- EXISTING — keep your down-state logic exactly as is -->
+<div class="src"><div class="grow"><div class="nm">ODPP</div><div class="meta">Checked 06:03 · new docs 06:03</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'ODPP')" title="Re-fetch now">↻</button></div>
+
+<div class="src" id="odpcRow"><div class="grow"><div class="nm">ODPC Determinations</div><div class="meta" id="odpcMeta">Unreachable since 04:10 · retry 08:30</div></div><span class="badge down" id="odpcBadge">Down</span><button class="refetch" onclick="retryODPC(this)" title="Retry now">↻</button></div>
         <div class="sc-note">Switching a source off skips it on the next run; its history stays.</div>
       </div>
     </div>
