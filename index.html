@@ -273,8 +273,29 @@ kbd{background:var(--ink);color:#F3F8FF;border-radius:5px;padding:1.5px 7px;font
       <div class="stat"><div class="n" id="statAwait">3</div><div class="l">Awaiting checks</div></div>
     </div>
     <div class="filters">
-      <select id="fCat" onchange="applyFilters()"><option value="">Category: All</option><option>Land</option><option>Courts</option><option>Prosecutions</option></select>
-      <select id="fSrc" onchange="applyFilters()"><option value="">Source: All</option><option>Gazette</option><option>Kenya Law</option><option>ODPP</option></select>
+<select id="fCat" onchange="applyFilters()">
+  <option value="">Category: All</option>
+  <option>Courts</option>
+  <option>Land</option>
+  <option>Legislation</option>
+  <option>Parliament</option>
+  <option>Prosecutions</option>
+  <option>Public Finance</option>
+  <option>Data Protection</option>
+</select>
+      <select id="fSrc" onchange="applyFilters()">
+  <option value="">Source: All</option>
+  <option>Kenya Law</option>
+  <option>Gazette</option>
+  <option>Hansard NA</option>
+  <option>Hansard Senate</option>
+  <option>Senate Bills</option>
+  <option>NA Bills</option>
+  <option>Statement Tracker</option>
+  <option>Auditor General</option>
+  <option>ODPP</option>
+  <option>ODPC</option>
+</select>      
       <select id="fSev" onchange="applyFilters()"><option value="">Severity: All</option><option>High</option><option>Medium</option></select>
       <select id="fStat" onchange="applyFilters()"><option value="">Status: All</option><option value="new">New</option><option value="docket">In docket</option><option value="hold">On hold</option><option value="assigned">Assigned</option><option value="dismissed">Dismissed</option></select>
       <input type="text" id="fSearch" placeholder="Search leads, case numbers, names…" oninput="applyFilters()">
