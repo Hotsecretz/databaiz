@@ -250,11 +250,18 @@ kbd{background:var(--ink);color:#F3F8FF;border-radius:5px;padding:1.5px 7px;font
   <div class="rail">
     <div class="panel">
       <div class="panel-h"><span>Source health</span><span style="color:#6B7A8C;font-weight:500;text-transform:none;letter-spacing:0">8 / 10 active</span></div>
-      <div class="src"><div class="grow"><div class="nm">Kenya Law</div><div class="meta">Checked 06:02 · new docs 06:02</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Kenya Law')" title="Re-fetch now">↻</button></div>
-      <div class="src"><div class="grow"><div class="nm">Gazette notices</div><div class="meta">Checked 06:02 · new docs 06:02</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Gazette')" title="Re-fetch now">↻</button></div>
-      <div class="src"><div class="grow"><div class="nm">Hansard</div><div class="meta">Checked 06:03 · nothing new for 2 days</div></div><span class="badge stale">Stale</span><button class="refetch" onclick="refetch(this,'Hansard')" title="Re-fetch now">↻</button></div>
-      <div class="src"><div class="grow"><div class="nm">ODPP</div><div class="meta">Checked 06:03 · new docs 06:03</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'ODPP')" title="Re-fetch now">↻</button></div>
-      <div class="src" id="odpcRow"><div class="grow"><div class="nm">ODPC</div><div class="meta" id="odpcMeta">Unreachable since 04:10 · retry 08:30</div></div><span class="badge down" id="odpcBadge">Down</span><button class="refetch" onclick="retryODPC(this)" title="Retry now">↻</button></div>
+     <div class="set-row"><span class="grow"><b>Kenya Law — Judgments & Regional Courts</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Kenya Law')"></button></div>
+<div class="set-row"><span class="grow"><b>Kenya Gazette</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Gazette')"></button></div>
+<div class="set-row"><span class="grow"><b>Hansard — National Assembly</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Hansard NA')"></button></div>
+<div class="set-row"><span class="grow"><b>Hansard — Senate</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Hansard Senate')"></button></div>
+<div class="set-row"><span class="grow"><b>Senate Bills</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Senate Bills')"></button></div>
+<div class="set-row"><span class="grow"><b>National Assembly Bills</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'NA Bills')"></button></div>
+<div class="set-row"><span class="grow"><b>Parliamentary Statement Tracker</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Statement Tracker')"></button></div>
+<div class="set-row"><span class="grow"><b>Auditor General — National Govt</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'AG National')"></button></div>
+<div class="set-row"><span class="grow"><b>Auditor General — Counties</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'AG Counties')"></button></div>
+<div class="set-row"><span class="grow"><b>Auditor General — Specialised & Special</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'AG Special')"></button></div>
+<div class="set-row"><span class="grow"><b>ODPP</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'ODPP')"></button></div>
+<div class="set-row"><span class="grow"><b>ODPC Determinations</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'ODPC')"></button></div>
       <button class="manual-add" onclick="openModal('addModal')">+ Add a document by link</button>
     </div>
     <div class="panel">
