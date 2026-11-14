@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DatabAIz — working mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0A2E55; --body:#333333; --accent:#0084FD; --accent-ink:#0065C4;
+  --green:#1A8754; --paper:#F9FAFF;
+  --t-amber:#E3F0FF; --t-green:#E8F7EF; --t-blue:#E3F0FF; --t-grey:#EEF2F7;
+  --line:#D7E3F0; --red:#C0392B; --t-red:#FBE9E7; --card:#FFFFFF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Lora',serif;background:#EAF2FB;color:var(--body);font-size:15px;line-height:1.5}
+.sans{font-family:'Poppins',sans-serif}
+button{font-family:'Poppins',sans-serif;cursor:pointer;transition:transform .06s, box-shadow .12s, background .12s}
+button:active{transform:scale(.97)}
+:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
+@media(max-width:760px){
+  .topbar{flex-wrap:wrap;height:auto;padding:6px 10px;row-gap:0}
+  .brand{width:100%;padding:6px 4px 2px;margin-right:0}
+  .tab{height:42px;padding:0 10px;font-size:12.5px}
+  .topbar .right{margin-left:auto}
+  .pill{display:none}
+  .helpbtn{width:34px;height:34px}
+}
+.topbar{background:var(--ink);color:#F3F8FF;display:flex;align-items:center;gap:6px;padding:0 18px;height:56px;position:sticky;top:0;z-index:80;box-shadow:0 2px 10px rgba(10,46,85,.18)}
+.brand{font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;letter-spacing:.09em;text-transform:uppercase;margin-right:14px}
+.brand span{color:#4FA8FF}
+.tab{font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;color:#A9C2DE;background:none;border:none;height:56px;padding:0 14px;border-bottom:3px solid transparent;position:relative}
+.tab:hover{color:#fff;background:rgba(255,255,255,.05)}
+.tab.on{color:#fff;border-bottom-color:var(--accent)}
+.tab .bub{position:absolute;top:9px;right:2px;background:var(--accent);color:#fff;font-size:9.5px;font-weight:700;border-radius:999px;min-width:16px;height:16px;display:none;align-items:center;justify-content:center;padding:0 4px}
+.tab .bub.show{display:inline-flex}
+.topbar .right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.pill{font-family:'Poppins',sans-serif;font-size:11px;padding:4px 11px;border-radius:999px;background:rgba(255,255,255,.1);display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:#6FBF8A}
+.helpbtn{width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);background:none;color:#F3F8FF;font-size:14px;font-weight:700}
+.helpbtn:hover{background:rgba(255,255,255,.12)}
+.page{display:none;max-width:1300px;margin:16px auto;padding:0 16px}
+.page.on{display:block}
+.wrap{display:grid;grid-template-columns:275px 1fr;gap:16px}
+@media(max-width:980px){.wrap{grid-template-columns:1fr}}
+.rail{display:flex;flex-direction:column;gap:14px;position:sticky;top:70px;align-self:start;max-height:calc(100vh - 84px);overflow:auto}
+@media(max-width:980px){.rail{position:static;max-height:none}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(10,46,85,.05)}
+.panel-h{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--accent-ink);padding:11px 14px;border-bottom:1px solid var(--line);background:var(--paper);display:flex;justify-content:space-between;align-items:center}
+.src{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #E7EEF5;font-size:13px}
+.src:last-of-type{border-bottom:0}
+.src .nm{color:var(--ink);font-weight:600}
+.src .meta{font-family:'Poppins',sans-serif;font-size:10px;color:#6B7A8C}
+.src .grow{flex:1}
+.badge{font-family:'Poppins',sans-serif;font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:999px;flex-shrink:0}
+.badge.ok{background:var(--t-green);color:var(--green)}
+.badge.stale{background:var(--t-amber);color:var(--accent-ink)}
+.badge.down{background:var(--t-red);color:var(--red)}
+.refetch{border:1px solid var(--line);background:#fff;border-radius:7px;font-size:12px;color:var(--ink);padding:4px 9px;flex-shrink:0}
+.refetch:hover{background:var(--t-amber);border-color:var(--accent)}
+.refetch.spin{animation:spin .8s linear}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.manual-add{display:block;width:calc(100% - 24px);margin:10px 12px 12px;padding:10px;border:1.5px dashed var(--accent);background:none;border-radius:9px;color:var(--accent-ink);font-size:12px;font-weight:600}
+.manual-add:hover{background:var(--t-amber)}
+.qitem{padding:10px 12px;border-bottom:1px solid #E7EEF5;font-size:13px;cursor:pointer}
+.qitem:hover{background:var(--paper)}
+.qitem:last-child{border-bottom:0}
+.qitem .qt{color:var(--ink);line-height:1.35}
+.qitem .qm{font-family:'Poppins',sans-serif;font-size:10px;color:#6B7A8C;margin-top:2px}
+.qitem .qm b{color:var(--accent-ink)}
+.dhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.dhead h1{font-size:24px;color:var(--ink)}
+.dhead .sans{font-size:11.5px;color:#6B7A8C}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+.stat .n{font-size:23px;font-weight:700;color:var(--ink)}
+.stat .l{font-family:'Poppins',sans-serif;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#6B7A8C}
+.stat.hot .n{color:var(--red)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.filters select,.filters input{font-family:'Poppins',sans-serif;font-size:12.5px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--body)}
+.filters select:hover,.filters input:hover{border-color:var(--accent)}
+.filters input{flex:1;min-width:160px}
+.empty{background:var(--card);border:1.5px dashed var(--line);border-radius:14px;padding:30px;text-align:center;font-family:'Poppins',sans-serif;font-size:13px;color:#6B7A8C;display:none}
+.empty.show{display:block}
+.empty b{color:var(--ink)}
+.lead{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:box-shadow .15s,border-color .15s,opacity .2s;margin-bottom:14px;box-shadow:0 1px 5px rgba(10,46,85,.05)}
+.lead.sel{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,132,253,.16)}
+.lead.hidden{display:none}
+.lead-top{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--paper);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tag{font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:7px}
+.tag.src-t{background:var(--ink);color:#F3F8FF}
+.tag.cat{background:var(--t-blue);color:var(--ink)}
+.tag.hi{background:var(--t-red);color:var(--red)}
+.tag.md{background:var(--t-amber);color:var(--accent-ink)}
+.tag.cluster{background:#fff;border:1px dashed var(--accent);color:var(--accent-ink);text-transform:none;letter-spacing:0;cursor:pointer}
+.tag.cluster:hover{background:var(--t-amber)}
+.lead-top .when{font-family:'Poppins',sans-serif;font-size:10.5px;color:#6B7A8C;margin-left:auto}
+.status-chip{font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:7px;display:none}
+.status-chip.show{display:inline-block}
+.status-chip.docket{background:var(--t-blue);color:var(--ink)}
+.status-chip.hold{background:var(--t-amber);color:var(--accent-ink)}
+.status-chip.dismissed{background:var(--t-grey);color:#5A6B7D}
+.status-chip.assigned{background:var(--t-green);color:var(--green)}
+.lead-body{padding:16px 18px;display:grid;grid-template-columns:1.45fr 1fr;gap:20px}
+@media(max-width:880px){.lead-body{grid-template-columns:1fr}}
+.lead h2{font-size:18px;color:var(--ink);line-height:1.35;margin-bottom:7px}
+.summary{font-size:14px;margin-bottom:10px}
+.eyebrow{font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--accent-ink);margin:12px 0 5px}
+.quote{border-left:3px solid var(--accent);background:var(--paper);padding:9px 12px;font-style:italic;font-size:13.5px;border-radius:0 8px 8px 0}
+.quote .ref{display:block;font-style:normal;font-family:'Poppins',sans-serif;font-size:10px;color:#6B7A8C;margin-top:4px}
+.quote .vtick{color:var(--green);font-weight:700}
+details.fold{border:1px solid var(--line);border-radius:9px;background:#fff;margin-bottom:6px}
+details.fold summary{cursor:pointer;padding:9px 13px;font-family:'Poppins',sans-serif;font-size:12.5px;font-weight:600;color:var(--ink);list-style:none;display:flex;gap:8px;align-items:center}
+details.fold summary:hover{background:var(--paper)}
+details.fold summary::-webkit-details-marker{display:none}
+details.fold summary::before{content:"▸";color:var(--accent);transition:transform .15s}
+details.fold[open] summary::before{transform:rotate(90deg)}
+details.fold .fb{padding:0 13px 11px;font-size:13.5px}
+details.fold .fb ul{padding-left:16px}
+details.fold .fb li{margin-bottom:3px}
+.flag-note{background:var(--t-red);border-radius:9px;padding:9px 12px;font-size:13px}
+.flag-note b{color:var(--red)}
+.srcline{margin-top:10px;font-family:'Poppins',sans-serif;font-size:11.5px}
+.srcline a{color:var(--accent-ink);word-break:break-all}
+.srcline a:hover{text-decoration:underline}
+.prov{margin-top:9px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}
+.prov summary{cursor:pointer;padding:8px 13px;font-family:'Poppins',sans-serif;font-size:11.5px;font-weight:600;color:#5A6B7D;list-style:none;display:flex;gap:6px;align-items:center}
+.prov summary:hover{color:var(--accent-ink)}
+.prov summary::-webkit-details-marker{display:none}
+.prov summary::before{content:"◈";color:var(--accent)}
+.prov .pb{padding:2px 13px 11px}
+.prov table{width:100%;border-collapse:collapse;font-family:'Poppins',sans-serif;font-size:10.5px}
+.prov td{padding:4px 6px 4px 0;vertical-align:top;border-bottom:1px solid #E3ECF5}
+.prov tr:last-child td{border-bottom:0}
+.prov td:first-child{color:#6B7A8C;white-space:nowrap;width:110px}
+.prov td b{color:var(--ink);font-weight:600}
+.ok-t{color:var(--green);font-weight:600}
+.fc{background:var(--t-blue);border:1px solid #CBD6E4;border-radius:13px;padding:13px;align-self:start}
+.fc-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.fc-h .t{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+.fc-score{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:700;color:#fff;background:var(--accent);padding:3px 10px;border-radius:999px}
+.fc-score.pass{background:var(--green)}
+.lvl{background:#fff;border:1px solid #D9E0EA;border-radius:9px;margin-bottom:6px;overflow:hidden}
+.lvl-h{display:flex;align-items:center;gap:8px;padding:9px 11px;cursor:pointer}
+.lvl-h:hover{background:#FBFCFE}
+.lvl-n{font-family:'Poppins',sans-serif;font-size:9.5px;font-weight:700;color:#fff;background:var(--ink);width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lvl.cleared .lvl-n{background:var(--green)}
+.lvl.flagged .lvl-n{background:var(--red)}
+.lvl-t{font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;color:var(--ink);flex:1}
+.st{font-family:'Poppins',sans-serif;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:6px;flex-shrink:0}
+.st.auto{background:var(--t-green);color:var(--green)}
+.st.human{background:var(--t-amber);color:var(--accent-ink)}
+.st.fail{background:var(--t-red);color:var(--red)}
+.lvl-b{padding:0 11px 10px 38px;font-size:12.5px;display:none}
+.lvl.open .lvl-b{display:block}
+.lvl-b label{display:flex;gap:9px;align-items:flex-start;margin-bottom:6px;cursor:pointer;font-size:12.5px;padding:3px 4px;border-radius:6px}
+.lvl-b label:hover{background:var(--paper)}
+.lvl-b input{margin-top:3px;accent-color:var(--green);width:15px;height:15px;flex-shrink:0;cursor:pointer}
+.fc-note{font-family:'Poppins',sans-serif;font-size:10px;color:#5B6B80;margin-top:9px;line-height:1.5}
+.resolve{margin-top:5px;font-size:11px;font-weight:600;background:var(--ink);color:#F3F8FF;border:none;border-radius:7px;padding:6px 11px}
+.resolve:hover{background:#082444}
+.pulse{animation:pulse 1.6s ease-in-out 3}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,132,253,0)}50%{box-shadow:0 0 0 6px rgba(0,132,253,.25)}}
+.actions{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--line);background:var(--paper);flex-wrap:wrap;align-items:center}
+.btn{font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.btn:hover{background:var(--t-grey);border-color:#C3D4E6}
+.btn u{text-decoration:underline;text-underline-offset:2px;text-decoration-color:var(--accent)}
+.btn.assign{background:var(--green);color:#fff;border-color:var(--green)}
+.btn.assign:hover{filter:brightness(1.07)}
+.btn.assign:disabled{background:#9AA5B4;border-color:#9AA5B4;cursor:not-allowed;filter:none}
+.gate{font-family:'Poppins',sans-serif;font-size:10.5px;color:var(--accent-ink);margin-left:auto}
+.ai-label{font-family:'Poppins',sans-serif;font-size:10px;color:#6B7A8C;padding:0 18px 12px;background:var(--paper)}
+.dock-group{margin-bottom:18px}
+.dock-h{font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.dock-h .cnt{background:var(--t-amber);border-radius:999px;padding:1px 9px;font-size:10px}
+.dock-item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-bottom:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dock-item .dt{flex:1;min-width:220px}
+.dock-item .dt .t{font-weight:600;color:var(--ink);font-size:14.5px}
+.dock-item .dt .m{font-family:'Poppins',sans-serif;font-size:10.5px;color:#6B7A8C;margin-top:2px}
+.dock-item .btn{padding:7px 13px;font-size:11.5px}
+.dock-empty{font-family:'Poppins',sans-serif;font-size:13px;color:#6B7A8C;background:var(--card);border:1.5px dashed var(--line);border-radius:12px;padding:22px;text-align:center}
+.dock-empty b{color:var(--ink)}
+.tl-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 24px;max-width:860px}
+.tl-card h2{font-size:20px;color:var(--ink);margin-bottom:2px}
+.tl-sub{font-family:'Poppins',sans-serif;font-size:11.5px;color:#6B7A8C;margin-bottom:16px}
+.tl{border-left:3px solid var(--accent);margin-left:8px;padding-left:22px}
+.tl-item{position:relative;padding-bottom:18px}
+.tl-item:last-child{padding-bottom:4px}
+.tl-item::before{content:"";position:absolute;left:-30px;top:4px;width:13px;height:13px;border-radius:50%;background:var(--accent);border:3px solid var(--card)}
+.tl-item.now::before{background:var(--green)}
+.tl-item .td{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:700;color:var(--accent-ink);text-transform:uppercase;letter-spacing:.06em}
+.tl-item.now .td{color:var(--green)}
+.tl-item .tt{font-weight:600;color:var(--ink);font-size:15px;margin:1px 0 2px}
+.tl-item .tm{font-size:13px}
+.tl-item .tsrc{font-family:'Poppins',sans-serif;font-size:10.5px;margin-top:3px}
+.tl-item .tsrc a{color:var(--accent-ink)}
+.set-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1000px}
+@media(max-width:860px){.set-grid{grid-template-columns:1fr}}
+.set-card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.set-card .sc-h{font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--accent-ink);padding:11px 15px;background:var(--paper);border-bottom:1px solid var(--line)}
+.set-card .sc-b{padding:13px 15px}
+.set-card textarea{width:100%;min-height:150px;font-family:'Lora',serif;font-size:13px;line-height:1.55;border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:#fff;color:var(--body);resize:vertical}
+.set-card .sc-note{font-family:'Poppins',sans-serif;font-size:10.5px;color:#6B7A8C;margin:8px 0}
+.savebtn{font-size:12px;font-weight:600;background:var(--ink);color:#F3F8FF;border:none;border-radius:8px;padding:8px 16px}
+.savebtn:hover{background:#082444}
+.set-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #E7EEF5;font-size:13.5px}
+.set-row:last-child{border-bottom:0}
+.set-row .grow{flex:1}
+.switch{width:38px;height:21px;border-radius:999px;background:#C3D4E6;border:none;position:relative;flex-shrink:0}
+.switch::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2.5px;left:3px;transition:left .15s}
+.switch.on{background:var(--green)}
+.switch.on::after{left:19px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--ink);color:#F3F8FF;font-family:'Poppins',sans-serif;font-size:13px;padding:11px 20px;border-radius:999px;transition:transform .25s;z-index:99;box-shadow:0 8px 26px rgba(0,0,0,.28);display:flex;gap:14px;align-items:center;max-width:92vw}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast button{background:none;border:none;color:#4FA8FF;font-weight:700;font-size:12.5px;padding:0}
+.overlay{position:fixed;inset:0;background:rgba(10,46,85,.45);z-index:90;display:none;align-items:center;justify-content:center;padding:18px}
+.overlay.show{display:flex}
+.modal{background:var(--card);border-radius:18px;max-width:560px;width:100%;padding:26px 28px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:88vh;overflow:auto}
+.modal h3{font-size:20px;color:var(--ink);margin-bottom:6px}
+.modal p{font-size:14px;margin-bottom:10px}
+.modal .mfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;align-items:center}
+.modal input[type=text]{width:100%;font-family:'Poppins',sans-serif;font-size:13px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;margin:6px 0 2px}
+.tour-step{display:flex;gap:12px;margin-bottom:12px}
+.tour-n{font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;color:#fff;background:var(--accent);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tour-step .ts-t{font-weight:600;color:var(--ink)}
+.tour-step .ts-d{font-size:13.5px}
+.kbd-row{font-family:'Poppins',sans-serif;font-size:12px;color:#5A6B7D;background:var(--t-grey);border-radius:9px;padding:9px 13px;margin-top:8px}
+kbd{background:var(--ink);color:#F3F8FF;border-radius:5px;padding:1.5px 7px;font-family:'Poppins',sans-serif;font-size:11px;margin:0 1px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">Datab<span>AIz</span></div>
+  <button class="tab on" data-page="digest" onclick="go('digest')">Digest</button>
+  <button class="tab" data-page="docket" onclick="go('docket')">Docket <span class="bub" id="dockBub">0</span></button>
+  <button class="tab" data-page="timelines" onclick="go('timelines')">Timelines</button>
+  <button class="tab" data-page="settings" onclick="go('settings')">Settings</button>
+  <div class="right">
+    <span class="pill"><span class="dot"></span> LLM live</span>
+    <span class="pill sans">Run 06:04 · next 14:00</span>
+    <button class="helpbtn" onclick="openTour()" title="How this works">?</button>
+  </div>
+</div>
+<div class="page on" id="page-digest">
+<div class="wrap">
+  <div class="rail">
+    <div class="panel">
+      <div class="panel-h"><span>Source health</span><span style="color:#6B7A8C;font-weight:500;text-transform:none;letter-spacing:0">4 / 5 active</span></div>
+      <div class="src"><div class="grow"><div class="nm">Kenya Law</div><div class="meta">Checked 06:02 · new docs 06:02</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Kenya Law')" title="Re-fetch now">↻</button></div>
+      <div class="src"><div class="grow"><div class="nm">Gazette notices</div><div class="meta">Checked 06:02 · new docs 06:02</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Gazette')" title="Re-fetch now">↻</button></div>
+      <div class="src"><div class="grow"><div class="nm">Hansard</div><div class="meta">Checked 06:03 · nothing new for 2 days</div></div><span class="badge stale">Stale</span><button class="refetch" onclick="refetch(this,'Hansard')" title="Re-fetch now">↻</button></div>
+      <div class="src"><div class="grow"><div class="nm">ODPP</div><div class="meta">Checked 06:03 · new docs 06:03</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'ODPP')" title="Re-fetch now">↻</button></div>
+      <div class="src" id="odpcRow"><div class="grow"><div class="nm">ODPC</div><div class="meta" id="odpcMeta">Unreachable since 04:10 · retry 08:30</div></div><span class="badge down" id="odpcBadge">Down</span><button class="refetch" onclick="retryODPC(this)" title="Retry now">↻</button></div>
+      <button class="manual-add" onclick="openModal('addModal')">+ Add a document by link</button>
+    </div>
+    <div class="panel">
+      <div class="panel-h">Needs an editor first</div>
+      <div class="qitem" onclick="jumpTo('lead1')"><div class="qt">Gazette: 214-parcel acquisition, Nakuru</div><div class="qm">High · <b>3 human checks waiting</b></div></div>
+      <div class="qitem" onclick="jumpTo('lead2')"><div class="qt">ODPP: charges over KES 480m tender</div><div class="qm"><b>Level 2 flagged</b> · figure unverified</div></div>
+      <div class="qitem" onclick="jumpTo('lead3')"><div class="qt">High Court: Finance Act petition urgent</div><div class="qm">Medium · in today's cause list</div></div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="dhead"><h1>Morning digest</h1><span class="sans">Wednesday 6 August · sorted by severity, then time</span></div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="statNew">3</div><div class="l">Leads shown</div></div>
+      <div class="stat"><div class="n">11</div><div class="l">From Gazette</div></div>
+      <div class="stat hot"><div class="n">2</div><div class="l">Legal-risk flags</div></div>
+      <div class="stat"><div class="n" id="statAwait">3</div><div class="l">Awaiting checks</div></div>
+    </div>
+    <div class="filters">
+      <select id="fCat" onchange="applyFilters()"><option value="">Category: All</option><option>Land</option><option>Courts</option><option>Prosecutions</option></select>
+      <select id="fSrc" onchange="applyFilters()"><option value="">Source: All</option><option>Gazette</option><option>Kenya Law</option><option>ODPP</option></select>
+      <select id="fSev" onchange="applyFilters()"><option value="">Severity: All</option><option>High</option><option>Medium</option></select>
+      <select id="fStat" onchange="applyFilters()"><option value="">Status: All</option><option value="new">New</option><option value="docket">In docket</option><option value="hold">On hold</option><option value="assigned">Assigned</option><option value="dismissed">Dismissed</option></select>
+      <input type="text" id="fSearch" placeholder="Search leads, case numbers, names…" oninput="applyFilters()">
+    </div>
+    <div class="empty" id="emptyMsg">No leads match these filters. <b>Clear a filter</b> or adjust the search.</div>
+    <div class="lead" id="lead1" tabindex="0" data-cat="Land" data-src="Gazette" data-sev="High" data-status="new"
+         data-search="state moves acquire 214 parcels nakuru bypass gazette land national land commission vol cxxviii 61">
+      <div class="lead-top">
+        <span class="tag src-t">Gazette</span><span class="tag cat">Land</span><span class="tag hi">High</span>
+        <span class="tag cluster" onclick="go('timelines')" title="See related leads">Related: 2 earlier leads →</span>
+        <span class="status-chip" id="chip1"></span>
+        <span class="when">Vol. CXXVIII No. 61 · 6 Aug 2026</span>
+      </div>
+      <div class="lead-body">
+        <div>
+          <h2>State moves to compulsorily acquire 214 parcels in Nakuru for bypass construction</h2>
+          <p class="summary">A notice under the Land Act lists 214 parcels earmarked for compulsory acquisition along the proposed eastern bypass. Owners have 30 days to submit claims. Several listed parcels sit inside a settlement scheme disputed in 2024.</p>
+          <div class="eyebrow">Verbatim extract</div>
+          <div class="quote">"…the National Land Commission intends to acquire the parcels of land described in the Schedule for the construction of the Nakuru Eastern Bypass…"
+            <span class="ref"><span class="vtick">✓ verified in document</span> · Page 4,102, paragraph 2 · copied, not paraphrased</span></div>
+          <div class="eyebrow">Suggested angle</div>
+          <details class="fold" open><summary>Breaking: who is affected and what the 30-day window means</summary>
+            <div class="fb">Names, parcel counts and the claims deadline, with the notice as the document of record. Practical detail for affected owners belongs in the story, not just the announcement.</div></details>
+          <details class="fold"><summary>More angles: investigative, longform, solutions</summary>
+            <div class="fb"><ul>
+              <li><b>Investigative:</b> cross-reference parcel numbers against the 2024 settlement dispute. Any transfers shortly before gazettement?</li>
+              <li><b>Longform:</b> what did owners on the last bypass actually receive, and how long did it take?</li>
+              <li><b>Solutions:</b> a claims guide for affected owners, with deadlines and free legal help.</li></ul></div></details>
+          <details class="fold"><summary>Follow-up questions</summary>
+            <div class="fb"><ul><li>Request the full parcel schedule from the NLC and match against the land registry.</li><li>Which valuers were appointed, and by whom?</li><li>Has the environmental licence been issued?</li></ul></div></details>
+          <div class="eyebrow">Ethics &amp; legal flags</div>
+          <p class="summary" style="margin-bottom:0">The notice names individual parcel owners. Publishing names is lawful (public document) but weigh fairness before naming people not yet contacted. No court order restricts reporting.</p>
+          <div class="srcline">Primary source: <a href="#" onclick="toast('In the real tool this opens the Gazette PDF at page 4,102');return false">new.kenyalaw.org/gazettes/2026/vol-cxxviii-no-61 (PDF, page 4,102)</a></div>
+          <details class="prov"><summary>Provenance: where this lead came from</summary>
+            <div class="pb"><table>
+              <tr><td>Fetched</td><td><b>06:02:14</b> today, from the URL above</td></tr>
+              <tr><td>Live check</td><td><span class="ok-t">Document unchanged</span> since fetch (checksum re-verified)</td></tr>
+              <tr><td>Extraction</td><td>Native PDF text, pages 4,098–4,131. No OCR needed.</td></tr>
+              <tr><td>Summary by</td><td>Model claude-sonnet · prompt v1.3 · house rules v2</td></tr>
+              <tr><td>Snapshot</td><td><a href="#" onclick="toast('Opens the frozen copy exactly as fetched at 06:02');return false" style="color:var(--accent-ink)">Stored copy as fetched (PDF, 2.1 MB)</a></td></tr>
+            </table></div></details>
+        </div>
+        <div class="fc" data-lead="1">
+          <div class="fc-h"><span class="t">Fact-check ladder</span><span class="fc-score" id="score1">2 / 5 cleared</span></div>
+          <div class="lvl cleared"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">1</span><span class="lvl-t">Source exists &amp; matches</span><span class="st auto">Auto · passed</span></div>
+            <div class="lvl-b">URL resolves. PDF fetched 06:02, date matches, checksum logged and re-verified.</div></div>
+          <div class="lvl cleared"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">2</span><span class="lvl-t">Extraction is verbatim</span><span class="st auto">Auto · passed</span></div>
+            <div class="lvl-b">All quotes and figures string-matched against extracted text. "214 parcels": matched. Quote, page 4,102: matched.</div></div>
+          <div class="lvl open pulse" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">3</span><span class="lvl-t">Names, dates &amp; attribution</span><span class="st human">Your check</span></div>
+            <div class="lvl-b">
+              <label><input type="checkbox" onchange="ladder(1)"> Issuing authority correct (NLC, not the Ministry)</label>
+              <label><input type="checkbox" onchange="ladder(1)"> 30-day deadline read correctly from the notice</label>
+              <label><input type="checkbox" onchange="ladder(1)"> Location and county details correct</label></div></div>
+          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">4</span><span class="lvl-t">Corroboration</span><span class="st human">Your check</span></div>
+            <div class="lvl-b">
+              <label><input type="checkbox" onchange="ladder(1)"> A second document supports the lead (NLC site, prior gazette, court record)</label>
+              <label><input type="checkbox" onchange="ladder(1)"> The 2024 dispute verified against the case file, not memory</label></div></div>
+          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">5</span><span class="lvl-t">Legal &amp; ethics clearance</span><span class="st human">Your check</span></div>
+            <div class="lvl-b">
+              <label><input type="checkbox" onchange="ladder(1)"> No court order restricting publication</label>
+              <label><input type="checkbox" onchange="ladder(1)"> Naming individuals is fair and necessary</label>
+              <label><input type="checkbox" onchange="ladder(1)"> No unnecessary personal data republished</label></div></div>
+          <div class="fc-note">Levels 1–2 ran automatically. Levels 3–5 are yours: open each and tick. <b>Assign unlocks at 5 / 5.</b></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="setStatus(1,'docket')"><u>D</u>ocket</button>
+        <button class="btn" onclick="setStatus(1,'hold')"><u>H</u>old</button>
+        <button class="btn" onclick="setStatus(1,'dismissed')">Dismiss (<u>X</u>)</button>
+        <button class="btn assign" id="assign1" disabled onclick="setStatus(1,'assigned')">Assign (locked)</button>
+        <span class="gate" id="gate1">Complete levels 3–5 to unlock Assign</span>
+      </div>
+      <div class="ai-label">AI-generated summary from the primary document. Verify against the source before assigning.</div>
+    </div>
+    <div class="lead" id="lead2" tabindex="0" data-cat="Prosecutions" data-src="ODPP" data-sev="Medium" data-status="new"
+         data-search="odpp charges county procurement officers kes 480 million tender abuse office conflict interest road maintenance">
+      <div class="lead-top">
+        <span class="tag src-t">ODPP</span><span class="tag cat">Prosecutions</span><span class="tag md">Medium</span>
+        <span class="status-chip" id="chip2"></span>
+        <span class="when">Press statement · 6 Aug 2026</span>
+      </div>
+      <div class="lead-body">
+        <div>
+          <h2>ODPP approves charges against three county procurement officers over KES 480 million tender</h2>
+          <p class="summary">A statement on the ODPP site says the Director has consented to charges of abuse of office and conflict of interest against three officers, relating to a road maintenance tender. No court date gazetted yet.</p>
+          <div class="eyebrow">Ethics &amp; legal flags</div>
+          <div class="flag-note"><b>Caution, sub judice territory.</b> Once charged, fair-trial rules apply. Nothing suggesting guilt. Suspects have not taken plea. Seek comment from all three before naming.</div>
+          <div class="srcline">Primary source: <a href="#" onclick="toast('In the real tool this opens the ODPP statement page');return false">odpp.go.ke/press/2026-08-06-consent-to-charge</a></div>
+          <details class="prov"><summary>Provenance: where this lead came from</summary>
+            <div class="pb"><table>
+              <tr><td>Fetched</td><td><b>06:03:41</b> today</td></tr>
+              <tr><td>Live check</td><td><span class="ok-t">Page unchanged</span> since fetch</td></tr>
+              <tr><td>Extraction</td><td>Page text plus one embedded image. The image was not machine-readable at fetch time.</td></tr>
+              <tr><td>Summary by</td><td>Model claude-sonnet · prompt v1.3 · house rules v2</td></tr>
+              <tr><td>Snapshot</td><td><a href="#" onclick="toast('Opens the stored copy: the page and the image, exactly as fetched');return false" style="color:var(--accent-ink)">Stored copy as fetched (HTML + image)</a></td></tr>
+            </table></div></details>
+        </div>
+        <div class="fc" data-lead="2">
+          <div class="fc-h"><span class="t">Fact-check ladder</span><span class="fc-score" id="score2">1 / 5 · flagged</span></div>
+          <div class="lvl cleared"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">1</span><span class="lvl-t">Source exists &amp; matches</span><span class="st auto">Auto · passed</span></div>
+            <div class="lvl-b">Statement fetched from the ODPP domain, 06:03.</div></div>
+          <div class="lvl flagged open" id="l2flag"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">2</span><span class="lvl-t">Extraction is verbatim</span><span class="st fail" id="l2st">Auto · flagged</span></div>
+            <div class="lvl-b" id="l2body"><b style="color:var(--red)">The KES 480 million figure was not found in the statement text.</b> It may sit inside the embedded image. Open the snapshot, read the figure with your own eyes, then resolve.
+              <br><button class="resolve" onclick="resolveFlag()">I read the snapshot: the figure is correct → resolve flag</button></div></div>
+          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">3</span><span class="lvl-t">Names, dates &amp; attribution</span><span class="st human">Your check</span></div>
+            <div class="lvl-b"><label><input type="checkbox" onchange="ladder(2)"> Officers' names and titles match the statement</label></div></div>
+          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">4</span><span class="lvl-t">Corroboration</span><span class="st human">Your check</span></div>
+            <div class="lvl-b"><label><input type="checkbox" onchange="ladder(2)"> Court registry or charge sheet confirms</label></div></div>
+          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">5</span><span class="lvl-t">Legal &amp; ethics clearance</span><span class="st human">Your check</span></div>
+            <div class="lvl-b"><label><input type="checkbox" onchange="ladder(2)"> Sub judice and fair-trial rules considered</label></div></div>
+          <div class="fc-note" id="fcnote2">A flagged level blocks Assign until an editor resolves it. The card says exactly what failed and where to look.</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="setStatus(2,'docket')"><u>D</u>ocket</button>
+        <button class="btn" onclick="setStatus(2,'hold')"><u>H</u>old</button>
+        <button class="btn" onclick="setStatus(2,'dismissed')">Dismiss (<u>X</u>)</button>
+        <button class="btn assign" id="assign2" disabled onclick="setStatus(2,'assigned')">Assign (locked)</button>
+        <span class="gate" id="gate2">Level 2 flagged: verify the figure before assigning</span>
+      </div>
+      <div class="ai-label">AI-generated summary from the primary document. Verify against the source before assigning.</div>
+    </div>
+    <div class="lead" id="lead3" tabindex="0" data-cat="Courts" data-src="Kenya Law" data-sev="Medium" data-status="new"
+         data-search="high court finance act petition e123 2026 urgent hearing cause list">
+      <div class="lead-top">
+        <span class="tag src-t">Kenya Law</span><span class="tag cat">Courts</span><span class="tag md">Medium</span>
+        <span class="tag cluster" onclick="go('timelines')" title="See the full timeline">Timeline: Petition E123 →</span>
+        <span class="status-chip" id="chip3"></span>
+        <span class="when">Cause list · 6 Aug 2026</span>
+      </div>
+      <div class="lead-body">
+        <div>
+          <h2>High Court certifies Finance Act petition as urgent, hearing set within 14 days</h2>
+          <p class="summary">Petition E123 of 2026 appears in today's cause list marked certified urgent. This connects to two earlier leads on the same petition; open the Timelines tab for the full sequence.</p>
+          <div class="eyebrow">Verbatim extract</div>
+          <div class="quote">"Petition E123 of 2026 — certified urgent; hearing within fourteen (14) days."
+            <span class="ref"><span class="vtick">✓ verified in document</span> · Cause list, entry 14</span></div>
+          <div class="srcline">Primary source: <a href="#" onclick="toast('In the real tool this opens the cause list at entry 14');return false">new.kenyalaw.org/causelists/2026-08-06 (entry 14)</a></div>
+          <details class="prov"><summary>Provenance: where this lead came from</summary>
+            <div class="pb"><table>
+              <tr><td>Fetched</td><td><b>06:02:55</b> today</td></tr>
+              <tr><td>Live check</td><td><span class="ok-t">Document unchanged</span> since fetch</td></tr>
+              <tr><td>Extraction</td><td>Native page text.</td></tr>
+              <tr><td>Summary by</td><td>Model claude-sonnet · prompt v1.3 · house rules v2</td></tr>
+            </table></div></details>
+        </div>
+        <div class="fc" data-lead="3">
+          <div class="fc-h"><span class="t">Fact-check ladder</span><span class="fc-score" id="score3">2 / 5 cleared</span></div>
+          <div class="lvl cleared"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">1</span><span class="lvl-t">Source exists &amp; matches</span><span class="st auto">Auto · passed</span></div>
+            <div class="lvl-b">Cause list fetched 06:02, checksum logged.</div></div>
+          <div class="lvl cleared"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">2</span><span class="lvl-t">Extraction is verbatim</span><span class="st auto">Auto · passed</span></div>
+            <div class="lvl-b">Entry 14 string-matched against the extracted list.</div></div>
+          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">3</span><span class="lvl-t">Names, dates &amp; attribution</span><span class="st human">Your check</span></div>
+            <div class="lvl-b"><label><input type="checkbox" onchange="ladder(3)"> Petition number and court station correct</label></div></div>
+          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">4</span><span class="lvl-t">Corroboration</span><span class="st human">Your check</span></div>
+            <div class="lvl-b"><label><input type="checkbox" onchange="ladder(3)"> Court registry confirms the certification</label></div></div>
+          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">5</span><span class="lvl-t">Legal &amp; ethics clearance</span><span class="st human">Your check</span></div>
+            <div class="lvl-b"><label><input type="checkbox" onchange="ladder(3)"> Matter is reportable; no restricting order</label></div></div>
+          <div class="fc-note">Tick levels 3–5 to unlock Assign.</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="setStatus(3,'docket')"><u>D</u>ocket</button>
+        <button class="btn" onclick="setStatus(3,'hold')"><u>H</u>old</button>
+        <button class="btn" onclick="setStatus(3,'dismissed')">Dismiss (<u>X</u>)</button>
+        <button class="btn assign" id="assign3" disabled onclick="setStatus(3,'assigned')">Assign (locked)</button>
+        <span class="gate" id="gate3">Complete levels 3–5 to unlock Assign</span>
+      </div>
+      <div class="ai-label">AI-generated summary from the primary document. Verify against the source before assigning.</div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="page" id="page-docket">
+  <div class="dhead"><h1>Docket</h1><span class="sans">Everything you have moved out of the digest, grouped by status</span></div>
+  <div id="dockBody"></div>
+</div>
+<div class="page" id="page-timelines">
+  <div class="dhead"><h1>Timelines</h1><span class="sans">Every stored case number, gazette number and name becomes a story history</span></div>
+  <div class="tl-card">
+    <h2>Petition E123 of 2026 — the Finance Act challenge</h2>
+    <div class="tl-sub">Built automatically from three leads that share the case number. Newest at the bottom.</div>
+    <div class="tl">
+      <div class="tl-item"><div class="td">14 July 2026 · Kenya Law</div><div class="tt">Petition E123 filed at the High Court</div><div class="tm">Challenge to sections of the Finance Act. First appearance in the daily filings list.</div><div class="tsrc"><a href="#" onclick="toast('Opens the filing record');return false">Source: daily filings, 14 Jul</a></div></div>
+      <div class="tl-item"><div class="td">28 July 2026 · Kenya Law</div><div class="tt">Conservatory orders sought; ruling reserved</div><div class="tm">The petitioners asked the court to suspend implementation pending hearing.</div><div class="tsrc"><a href="#" onclick="toast('Opens the cause list record');return false">Source: cause list, 28 Jul</a></div></div>
+      <div class="tl-item now"><div class="td">6 August 2026 · Kenya Law · today</div><div class="tt">Certified urgent; hearing within 14 days</div><div class="tm">Today's lead. The case now moves on a fast clock, and the hearing date will land inside this news cycle.</div><div class="tsrc"><a href="#" onclick="go('digest');jumpTo('lead3')">Open today's lead card →</a></div></div>
+    </div>
+  </div>
+  <br>
+  <div class="tl-card">
+    <h2>Nakuru Eastern Bypass — the land file</h2>
+    <div class="tl-sub">Two earlier leads share the project name with today's acquisition notice.</div>
+    <div class="tl">
+      <div class="tl-item"><div class="td">19 June 2026 · Gazette</div><div class="tt">Route corridor gazetted</div><div class="tm">First formal notice of the eastern bypass alignment.</div></div>
+      <div class="tl-item"><div class="td">22 July 2026 · Hansard</div><div class="tt">Compensation questioned in the House</div><div class="tm">An MP asked when valuation for affected owners would begin.</div></div>
+      <div class="tl-item now"><div class="td">6 August 2026 · Gazette · today</div><div class="tt">214 parcels listed for compulsory acquisition</div><div class="tm">Today's High-severity lead.</div><div class="tsrc"><a href="#" onclick="go('digest');jumpTo('lead1')">Open today's lead card →</a></div></div>
+    </div>
+  </div>
+</div>
+<div class="page" id="page-settings">
+  <div class="dhead"><h1>Settings</h1><span class="sans">The newsroom's personality lives here. Editors read it; an administrator edits it.</span></div>
+  <div class="set-grid">
+    <div class="set-card">
+      <div class="sc-h">House rules (config/house_rules.md)</div>
+      <div class="sc-b">
+        <textarea>Attribute every figure to the document, with a page number.
+Money in KES, never KSH. British English throughout.
+Never state or imply guilt before a plea is taken.
+Name the court and station, not just "a court".
+Quotes are verbatim with page references, never paraphrased.
+Flag any lead naming a minor or a victim of a sexual offence.</textarea>
+        <div class="sc-note">The model receives this file in every summarise call. Change it here, and tomorrow's digest obeys the new version.</div>
+        <button class="savebtn" onclick="toast('House rules saved · applies from the next run (14:00)')">Save changes</button>
+      </div>
+    </div>
+    <div class="set-card">
+      <div class="sc-h">Severity rubric (config/severity_rubric.md)</div>
+      <div class="sc-b">
+        <textarea>HIGH: affects many identifiable people, large public money, tight statutory deadlines, or senior public officials. Editor sees it first.
+MEDIUM: significant but not urgent; institutional or procedural steps in running matters.
+LOW: routine notices, appointments without controversy, procedural adjournments.</textarea>
+        <div class="sc-note">The model must state which rule it applied, and the editor can always overrule on the card.</div>
+        <button class="savebtn" onclick="toast('Severity rubric saved · applies from the next run')">Save changes</button>
+      </div>
+    </div>
+    <div class="set-card">
+      <div class="sc-h">Sources &amp; schedule (config/sources.yaml)</div>
+      <div class="sc-b">
+        <div class="set-row"><span class="grow"><b>Kenya Law</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Kenya Law')"></button></div>
+        <div class="set-row"><span class="grow"><b>Gazette notices</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Gazette')"></button></div>
+        <div class="set-row"><span class="grow"><b>Hansard</b> · daily 06:00 (V2)</span><button class="switch on" onclick="flip(this,'Hansard')"></button></div>
+        <div class="set-row"><span class="grow"><b>ODPP</b> · daily 06:00 (V2)</span><button class="switch on" onclick="flip(this,'ODPP')"></button></div>
+        <div class="set-row"><span class="grow"><b>ODPC</b> · daily 06:00 (V2)</span><button class="switch on" onclick="flip(this,'ODPC')"></button></div>
+        <div class="sc-note">Switching a source off skips it on the next run; its history stays.</div>
+      </div>
+    </div>
+    <div class="set-card">
+      <div class="sc-h">Checklist wording (the ladder's human levels)</div>
+      <div class="sc-b">
+        <textarea>Level 3 — Names, dates & attribution: authority, deadlines, locations confirmed against the source.
+Level 4 — Corroboration: a second document or record supports the lead.
+Level 5 — Legal & ethics: court orders, sub judice, fairness in naming, data protection.</textarea>
+        <div class="sc-note">These lines appear on every card. Plain newsroom words only.</div>
+        <button class="savebtn" onclick="toast('Checklist wording saved · cards update immediately')">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"><span id="toastMsg">Saved</span><button id="toastUndo" style="display:none" onclick="undo()">Undo</button></div>
+<div class="overlay" id="addModal" onclick="if(event.target===this)closeModal('addModal')">
+  <div class="modal">
+    <h3>Add a document by link</h3>
+    <p>Paste a link to any official document the scrapers missed, or one that appeared only on social media. It runs through the same pipeline as everything else: fetched, frozen, extracted, summarised, verified.</p>
+    <input type="text" placeholder="https://…" id="addUrl">
+    <div class="mfoot">
+      <button class="btn" onclick="closeModal('addModal')">Cancel</button>
+      <button class="savebtn" onclick="closeModal('addModal');toast('Document queued · it will appear as a lead when the pipeline finishes (about 2 minutes)')">Run it through the pipeline</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="tourModal" onclick="if(event.target===this)closeModal('tourModal')">
+  <div class="modal">
+    <h3>Welcome to DatabAIz</h3>
+    <p>The tool reads Kenya's official record every morning and turns it into story leads. Your job takes three moves:</p>
+    <div class="tour-step"><span class="tour-n">1</span><div><div class="ts-t">Read a card</div><div class="ts-d">Each lead has a summary, an exact quote already verified against the document, the legal flags, and a link to the original. Amber panels on the left show which sources are healthy.</div></div></div>
+    <div class="tour-step"><span class="tour-n">2</span><div><div class="ts-t">Climb the ladder</div><div class="ts-d">Levels 1–2 were checked automatically. Open levels 3, 4 and 5 on the right of a card and tick them as you verify. The glowing level on the first card is where to start.</div></div></div>
+    <div class="tour-step"><span class="tour-n">3</span><div><div class="ts-t">Decide</div><div class="ts-d">Docket it, Hold it, Dismiss it, or, once all five levels clear, Assign it to a reporter. Docketed items land in the Docket tab. Nothing can be assigned unverified: that is the whole point.</div></div></div>
+    <div class="kbd-row"><kbd>J</kbd> / <kbd>K</kbd> move between leads · <kbd>D</kbd> docket · <kbd>H</kbd> hold · <kbd>X</kbd> dismiss · <kbd>?</kbd> reopen this guide</div>
+    <div class="mfoot"><button class="savebtn" onclick="closeModal('tourModal')">Start triaging</button></div>
+  </div>
+</div>
+<script>
+const TITLES = {1:'State moves to acquire 214 parcels in Nakuru for bypass',2:'ODPP approves charges over KES 480 million tender',3:'High Court certifies Finance Act petition as urgent'};
+const META = {1:'Gazette · Land · High',2:'ODPP · Prosecutions · Medium',3:'Kenya Law · Courts · Medium'};
+let status = {1:'new',2:'new',3:'new'};
+let lastAction = null;
+let toastTimer;
+function toast(msg, undoable){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastUndo').style.display = undoable?'inline':'none';
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'), undoable?4200:2400);
+}
+function undo(){
+  if(!lastAction) return;
+  status[lastAction.n]=lastAction.prev;
+  paintStatus(lastAction.n);
+  toast('Undone · back to '+labelFor(lastAction.prev));
+  lastAction=null;
+  renderDocket(); applyFilters();
+}
+function go(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
+  document.getElementById('page-'+p).classList.add('on');
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x.dataset.page===p));
+  if(p==='docket') renderDocket();
+  window.scrollTo({top:0});
+}
+function jumpTo(id){
+  go('digest');
+  setTimeout(()=>{
+    const el=document.getElementById(id);
+    el.classList.remove('hidden');
+    el.scrollIntoView({block:'center',behavior:'smooth'});
+    select(leads.indexOf(el));
+  },60);
+}
+function refetch(btn,name){
+  btn.classList.remove('spin'); void btn.offsetWidth; btn.classList.add('spin');
+  toast('Re-fetching '+name+'… nothing new since 06:02');
+}
+function retryODPC(btn){
+  btn.classList.remove('spin'); void btn.offsetWidth; btn.classList.add('spin');
+  setTimeout(()=>{
+    document.getElementById('odpcBadge').className='badge ok';
+    document.getElementById('odpcBadge').textContent='Fresh';
+    document.getElementById('odpcMeta').textContent='Back online · checked just now · 1 new document';
+    toast('ODPC is back · 1 new statement fetched and queued for the pipeline');
+  },800);
+}
+function flip(sw,name){
+  sw.classList.toggle('on');
+  toast(name+(sw.classList.contains('on')?' switched on · included from the next run':' switched off · skipped on the next run'));
+}
+function fold(h){ h.parentElement.classList.toggle('open'); h.parentElement.classList.remove('pulse'); }
+function ladder(n){
+  const fc=document.querySelector('.fc[data-lead="'+n+'"]');
+  const humans=fc.querySelectorAll('.lvl[data-human]');
+  const flagged=fc.querySelector('.lvl.flagged');
+  let cleared=fc.querySelectorAll('.lvl.cleared:not([data-human])').length;
+  humans.forEach(lv=>{
+    const done=[...lv.querySelectorAll('input')].every(x=>x.checked);
+    lv.classList.toggle('cleared',done);
+    if(done)cleared++;
+  });
+  const total=5, blocked=!!flagged;
+  const score=document.getElementById('score'+n);
+  score.textContent = blocked? cleared+' / 5 · flagged' : cleared+' / 5 cleared';
+  score.classList.toggle('pass', cleared===total && !blocked);
+  const all=(cleared===total)&&!blocked;
+  const a=document.getElementById('assign'+n), g=document.getElementById('gate'+n);
+  a.disabled=!all;
+  a.textContent=all?'Assign':'Assign (locked)';
+  if(blocked){ g.textContent='Level 2 flagged: verify the figure before assigning'; g.style.color='var(--red)'; }
+  else if(all){ g.textContent='All five levels cleared. Assign is open.'; g.style.color='var(--green)'; toast('Ladder cleared on "'+TITLES[n].slice(0,40)+'…" · Assign unlocked'); }
+  else { g.textContent='Complete levels 3–5 to unlock Assign'; g.style.color='var(--accent-ink)'; }
+}
+function resolveFlag(){
+  const lv=document.getElementById('l2flag');
+  lv.classList.remove('flagged'); lv.classList.add('cleared');
+  document.getElementById('l2st').className='st auto'; document.getElementById('l2st').textContent='Resolved by you';
+  document.getElementById('l2body').innerHTML='Figure confirmed against the stored snapshot by the editor. Logged: resolved, with your name and the time.';
+  document.getElementById('fcnote2').textContent='Flag resolved. Now tick levels 3–5 to unlock Assign.';
+  toast('Flag resolved · logged with your name at '+new Date().toLocaleTimeString().slice(0,5));
+  ladder(2);
+}
+function labelFor(s){return {new:'New',docket:'In docket',hold:'On hold',dismissed:'Dismissed',assigned:'Assigned'}[s];}
+function paintStatus(n){
+  const chip=document.getElementById('chip'+n);
+  const s=status[n];
+  if(s==='new'){chip.className='status-chip';chip.textContent='';}
+  else{chip.className='status-chip show '+s;chip.textContent=labelFor(s);}
+}
+function setStatus(n,s){
+  lastAction={n,prev:status[n]};
+  status[n]=s; paintStatus(n);
+  const extra = s==='assigned' ? ' · a house-style brief goes to the reporter' : (s==='docket'?' · find it in the Docket tab':'');
+  toast(labelFor(s)+': "'+TITLES[n].slice(0,44)+'…"'+extra, true);
+  renderDocket(); applyFilters(); updateBub();
+}
+function updateBub(){
+  const c=Object.values(status).filter(s=>s!=='new'&&s!=='dismissed').length;
+  const b=document.getElementById('dockBub');
+  b.textContent=c; b.classList.toggle('show',c>0);
+}
+function renderDocket(){
+  const groups={docket:'In docket',assigned:'Assigned',hold:'On hold',dismissed:'Dismissed'};
+  let html='';
+  for(const [key,label] of Object.entries(groups)){
+    const items=Object.keys(status).filter(n=>status[n]===key);
+    if(!items.length) continue;
+    html+='<div class="dock-group"><div class="dock-h">'+label+'<span class="cnt">'+items.length+'</span></div>';
+    items.forEach(n=>{
+      html+='<div class="dock-item"><div class="dt"><div class="t">'+TITLES[n]+'</div><div class="m">'+META[n]+' · moved just now by you</div></div>'+
+            '<button class="btn" onclick="jumpTo(\'lead'+n+'\')">Open card</button>'+
+            '<button class="btn" onclick="setStatus('+n+',\'new\')">Return to digest</button></div>';
+    });
+    html+='</div>';
+  }
+  document.getElementById('dockBody').innerHTML = html ||
+    '<div class="dock-empty"><b>The docket is empty.</b><br>Back in the Digest, press <b>Docket</b> on any lead (or the D key) and it will appear here, grouped by status.</div>';
+  updateBub();
+}
+const leads=[...document.querySelectorAll('.lead')];
+function applyFilters(){
+  const cat=document.getElementById('fCat').value, src=document.getElementById('fSrc').value,
+        sev=document.getElementById('fSev').value, st=document.getElementById('fStat').value,
+        q=document.getElementById('fSearch').value.trim().toLowerCase();
+  let shown=0;
+  leads.forEach(el=>{
+    const n=+el.id.slice(4);
+    const ok=(!cat||el.dataset.cat===cat)&&(!src||el.dataset.src===src)&&(!sev||el.dataset.sev===sev)
+           &&(!st||status[n]===st)&&(!q||el.dataset.search.includes(q));
+    el.classList.toggle('hidden',!ok);
+    if(ok){shown++;}
+  });
+  document.getElementById('statNew').textContent=shown;
+  document.getElementById('statAwait').textContent=leads.filter((el,i)=>!el.classList.contains('hidden')&&document.getElementById('assign'+(i+1)).disabled&&status[i+1]==='new').length;
+  document.getElementById('emptyMsg').classList.toggle('show',shown===0);
+}
+let sel=-1;
+function select(i){
+  const vis=leads.filter(l=>!l.classList.contains('hidden'));
+  if(!vis.length) return;
+  if(sel>=0&&leads[sel]) leads[sel].classList.remove('sel');
+  i=Math.max(0,Math.min(vis.length-1,i));
+  const el=vis[i]; sel=leads.indexOf(el);
+  el.classList.add('sel');
+  el.scrollIntoView({block:'center',behavior:'smooth'});
+}
+document.addEventListener('keydown',e=>{
+  if(e.target.matches('input,select,textarea'))return;
+  const k=e.key.toLowerCase();
+  const visIdx=leads.filter(l=>!l.classList.contains('hidden')).indexOf(leads[sel]);
+  if(k==='j')select(visIdx+1);
+  else if(k==='k')select(visIdx-1);
+  else if(k==='?')openTour();
+  else if(sel>=0){
+    const n=+leads[sel].id.slice(4);
+    if(k==='d')setStatus(n,'docket');
+    else if(k==='h')setStatus(n,'hold');
+    else if(k==='x')setStatus(n,'dismissed');
+  }
+});
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+function openTour(){openModal('tourModal');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('addModal');closeModal('tourModal');}});
+renderDocket();
+setTimeout(openTour, 500);
+</script>
+</body>
+</html>
