@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  .rail .panel{flex-shrink:0}            /* stop the box being squashed and clipping rows */
+.rail .set-row{padding:9px 14px}       /* keep text off the box edges */
+.rail .switch{display:none}            /* hide the toggles in the rail only */
 :root{
   --ink:#0A2E55; --body:#333333; --accent:#0084FD; --accent-ink:#0065C4;
   --green:#1A8754; --paper:#F9FAFF;
@@ -1140,12 +1143,3 @@ setTimeout(openTour, 500);
 </script>
 </body>
 </html>
-function updateDigestDate(){
-  const now = new Date();
-  const tz = 'Africa/Nairobi';
-  const date = now.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', timeZone:tz}).replace(',', '');
-  const time = now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', timeZone:tz});
-  document.getElementById('digestDate').textContent = date + ' · ' + time;
-}
-updateDigestDate();
-setInterval(updateDigestDate, 60000);
