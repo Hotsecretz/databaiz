@@ -7,9 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  .rail .panel{flex-shrink:0}            /* stop the box being squashed and clipping rows */
-.rail .set-row{padding:9px 14px}       /* keep text off the box edges */
-.rail .switch{display:none}            /* hide the toggles in the rail only */
 :root{
   --ink:#0A2E55; --body:#333333; --accent:#0084FD; --accent-ink:#0065C4;
   --green:#1A8754; --paper:#F9FAFF;
@@ -253,20 +250,21 @@ kbd{background:var(--ink);color:#F3F8FF;border-radius:5px;padding:1.5px 7px;font
   <div class="rail">
     <div class="panel">
       <div class="panel-h"><span>Source health</span><span style="color:#6B7A8C;font-weight:500;text-transform:none;letter-spacing:0">8 / 10 active</span></div>
-     <div class="set-row"><span class="grow"><b>Kenya Law — Judgments & Regional Courts</b> </span><button class="switch on" onclick="flip(this,'Kenya Law')"></button></div>
-<div class="set-row"><span class="grow"><b>Kenya Gazette</b> </span><button class="switch on" onclick="flip(this,'Gazette')"></button></div>
-<div class="set-row"><span class="grow"><b>Hansard — National Assembly</b> </span><button class="switch on" onclick="flip(this,'Hansard NA')"></button></div>
-<div class="set-row"><span class="grow"><b>Hansard — Senate</b> </span> <button class="switch on" onclick="flip(this,'Hansard Senate')"></button></div>
-<div class="set-row"><span class="grow"><b>Senate Bills</b> </span> <button class="switch on" onclick="flip(this,'Senate Bills')"></button></div>
-<div class="set-row"><span class="grow"><b>National Assembly Bills</b></span> <button class="switch on" onclick="flip(this,'NA Bills')"></button></div>
-<div class="set-row"><span class="grow"><b>Parliamentary Statement Tracker</b> </span><button class="switch on" onclick="flip(this,'Statement Tracker')"></button></div>
-<div class="set-row"><span class="grow"><b>Auditor General — National Govt</b> </span><button class="switch on" onclick="flip(this,'AG National')"></button></div>
-<div class="set-row"><span class="grow"><b>Auditor General — Counties</b> </span><button class="switch on" onclick="flip(this,'AG Counties')"></button></div>
-<div class="set-row"><span class="grow"><b>Auditor General — Specialised & Special</b> </span><button class="switch on" onclick="flip(this,'AG Special')"></button></div>
+     <div class="set-row"><span class="grow"><b>Kenya Law — Judgments & Regional Courts</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Kenya Law')"></button></div>
+<div class="set-row"><span class="grow"><b>Kenya Gazette</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Gazette')"></button></div>
+<div class="set-row"><span class="grow"><b>Hansard — National Assembly</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Hansard NA')"></button></div>
+<div class="set-row"><span class="grow"><b>Hansard — Senate</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Hansard Senate')"></button></div>
+<div class="set-row"><span class="grow"><b>Senate Bills</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Senate Bills')"></button></div>
+<div class="set-row"><span class="grow"><b>National Assembly Bills</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'NA Bills')"></button></div>
+<div class="set-row"><span class="grow"><b>Parliamentary Statement Tracker</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Statement Tracker')"></button></div>
+<div class="set-row"><span class="grow"><b>Auditor General — National Govt</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'AG National')"></button></div>
+<div class="set-row"><span class="grow"><b>Auditor General — Counties</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'AG Counties')"></button></div>
+<div class="set-row"><span class="grow"><b>Auditor General — Specialised & Special</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'AG Special')"></button></div>
 <div class="set-row"><span class="grow"><b>ODPP</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'ODPP')"></button></div>
-<div class="set-row"><span class="grow"><b>ODPC Determinations</b>  </span><button class="switch on" onclick="flip(this,'ODPC')"></button></div>
-<div class="set-row"><span class="grow"><b>KNBS — All Reports</b> </span><button class="switch on" onclick="flip(this,'KNBS')"></button> 
-  <button class="manual-add" onclick="openModal('addModal')"><div class="set-row"><span class="grow"><b>Controller of Budget</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Controller of Budget')"></button></div><div class="panel">
+<div class="set-row"><span class="grow"><b>ODPC Determinations</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'ODPC')"></button></div>
+      <button class="manual-add" onclick="openModal('addModal')">+ Add a document by link</button>
+    </div>
+    <div class="panel">
       <div class="panel-h">Needs an editor first</div>
       <div class="qitem" onclick="jumpTo('lead1')"><div class="qt">Gazette: 214-parcel acquisition, Nakuru</div><div class="qm">High · <b>3 human checks waiting</b></div></div>
       <div class="qitem" onclick="jumpTo('lead2')"><div class="qt">ODPP: charges over KES 480m tender</div><div class="qm"><b>Level 2 flagged</b> · figure unverified</div></div>
@@ -274,11 +272,12 @@ kbd{background:var(--ink);color:#F3F8FF;border-radius:5px;padding:1.5px 7px;font
     </div>
   </div>
   <div class="main">
-   <div class="dhead"><h1>Morning digest</h1><span class="sans"><span id="digestDate"></span> · sorted by severity</span></div>
-      <div class="stat"><div class="n" id="statNew">5</div><div class="l">Leads shown</div></div>
+    <div class="dhead"><h1>Morning digest</h1><span class="sans">Wednesday 6 August · sorted by severity, then time</span></div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="statNew">3</div><div class="l">Leads shown</div></div>
       <div class="stat"><div class="n">11</div><div class="l">From official records</div></div>
       <div class="stat hot"><div class="n">2</div><div class="l">Legal-risk flags</div></div>
-      <div class="stat"><div class="n" id="statAwait">5</div><div class="l">Awaiting checks</div></div>
+      <div class="stat"><div class="n" id="statAwait">3</div><div class="l">Awaiting checks</div></div>
     </div>
     <div class="filters">
 <select id="fCat" onchange="applyFilters()">
@@ -303,9 +302,7 @@ kbd{background:var(--ink);color:#F3F8FF;border-radius:5px;padding:1.5px 7px;font
   <option>Auditor General</option>
   <option>ODPP</option>
   <option>ODPC</option>
-  <option>Controller of Budget</option>
-  <option>KNBS</option>
-</select>      
+</select>    
       <select id="fSev" onchange="applyFilters()"><option value="">Severity: All</option><option>High</option><option>Medium</option></select>
       <select id="fStat" onchange="applyFilters()"><option value="">Status: All</option><option value="new">New</option><option value="docket">In docket</option><option value="hold">On hold</option><option value="assigned">Assigned</option><option value="dismissed">Dismissed</option></select>
       <input type="text" id="fSearch" placeholder="Search leads, case numbers, names…" oninput="applyFilters()">
@@ -474,131 +471,6 @@ kbd{background:var(--ink);color:#F3F8FF;border-radius:5px;padding:1.5px 7px;font
         <button class="btn assign" id="assign3" disabled onclick="setStatus(3,'assigned')">Assign (locked)</button>
         <span class="gate" id="gate3">Complete levels 3–5 to unlock Assign</span>
       </div>
-      <div class="lead" id="lead4" tabindex="0" data-cat="Public Finance" data-src="Controller of Budget" data-sev="Medium" data-status="new"
-         data-search="development spending absorption 38 per cent nine months controller of budget national government budget implementation review report fy 2025/26 mdas">
-      <div class="lead-top">
-        <span class="tag src-t">Controller of Budget</span><span class="tag cat">Public Finance</span><span class="tag md">Medium</span>
-        <span class="status-chip" id="chip4"></span>
-        <span class="when">BIRR · first nine months FY 2025/26 · 6 Aug 2026</span>
-      </div>
-      <div class="lead-body">
-        <div>
-          <h2>Development spending at 38 per cent of annual target nine months into the financial year</h2>
-          <p class="summary">The Controller of Budget's review report for the first nine months of FY 2025/26 puts national government development expenditure at 38 per cent of the annual target. The report lists the ministries and agencies with the lowest absorption and cites delayed exchequer releases as a cause.</p>
-          <div class="eyebrow">Verbatim extract</div>
-          <div class="quote">"…development expenditure absorption stood at 38 per cent of the annual target, attributed in part to delays in exchequer releases…"
-            <span class="ref"><span class="vtick">✓ verified in document</span> · Page 37, paragraph 3 · copied, not paraphrased</span></div>
-          <div class="eyebrow">Suggested angle</div>
-          <details class="fold" open><summary>Breaking: which projects are stalled and why</summary>
-            <div class="fb">The headline absorption figure, the lowest-performing ministries and the reason the report gives, with the report as the document of record.</div></details>
-          <details class="fold"><summary>More angles: investigative, longform, solutions</summary>
-            <div class="fb"><ul>
-              <li><b>Investigative:</b> compare absorption per ministry against the same period last year. Which projects have stalled twice?</li>
-              <li><b>Longform:</b> what a stalled project looks like on the ground, from one site in the report.</li>
-              <li><b>Solutions:</b> what the Controller recommends, and whether earlier recommendations were acted on.</li></ul></div></details>
-          <details class="fold"><summary>Follow-up questions</summary>
-            <div class="fb"><ul><li>Ask the National Treasury for the exchequer release schedule for the period.</li><li>Which ministries dispute the figures?</li><li>How much of the unspent allocation is donor-funded?</li></ul></div></details>
-          <div class="eyebrow">Ethics &amp; legal flags</div>
-          <p class="summary" style="margin-bottom:0">The report names institutions, not individuals. Give the named ministries a chance to respond before publication. No court order restricts reporting.</p>
-          <div class="srcline">Primary source: <a href="#" onclick="toast('In the real tool this opens the report PDF at page 37');return false">cob.go.ke/reports/national-government-budget-implementation-review-reports (PDF, page 37)</a></div>
-          <details class="prov"><summary>Provenance: where this lead came from</summary>
-            <div class="pb"><table>
-              <tr><td>Fetched</td><td><b>06:04:09</b> today, from the URL above</td></tr>
-              <tr><td>Live check</td><td><span class="ok-t">Document unchanged</span> since fetch (checksum re-verified)</td></tr>
-              <tr><td>Extraction</td><td>Native PDF text, pages 30–44. No OCR needed.</td></tr>
-              <tr><td>Summary by</td><td>Model claude-sonnet · prompt v1.3 · house rules v2</td></tr>
-              <tr><td>Snapshot</td><td><a href="#" onclick="toast('Opens the frozen copy exactly as fetched at 06:04');return false" style="color:var(--accent-ink)">Stored copy as fetched (PDF)</a></td></tr>
-            </table></div></details>
-        </div>
-        <div class="fc" data-lead="4">
-          <div class="fc-h"><span class="t">Fact-check ladder</span><span class="fc-score" id="score4">2 / 5 cleared</span></div>
-          <div class="lvl cleared"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">1</span><span class="lvl-t">Source exists &amp; matches</span><span class="st auto">Auto · passed</span></div>
-            <div class="lvl-b">URL resolves. PDF fetched 06:04, checksum logged and re-verified.</div></div>
-          <div class="lvl cleared"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">2</span><span class="lvl-t">Extraction is verbatim</span><span class="st auto">Auto · passed</span></div>
-            <div class="lvl-b">"38 per cent": matched. Quote, page 37: matched.</div></div>
-          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">3</span><span class="lvl-t">Names, dates &amp; attribution</span><span class="st human">Your check</span></div>
-            <div class="lvl-b">
-              <label><input type="checkbox" onchange="ladder(4)"> Reporting period and financial year read correctly</label>
-              <label><input type="checkbox" onchange="ladder(4)"> Figure is development spending, not total spending</label></div></div>
-          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">4</span><span class="lvl-t">Corroboration</span><span class="st human">Your check</span></div>
-            <div class="lvl-b"><label><input type="checkbox" onchange="ladder(4)"> Figure matches the report's summary table</label></div></div>
-          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">5</span><span class="lvl-t">Legal &amp; ethics clearance</span><span class="st human">Your check</span></div>
-            <div class="lvl-b"><label><input type="checkbox" onchange="ladder(4)"> Named ministries offered a right of reply</label></div></div>
-          <div class="fc-note">Tick levels 3–5 to unlock Assign.</div>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn" onclick="setStatus(4,'docket')"><u>D</u>ocket</button>
-        <button class="btn" onclick="setStatus(4,'hold')"><u>H</u>old</button>
-        <button class="btn" onclick="setStatus(4,'dismissed')">Dismiss (<u>X</u>)</button>
-        <button class="btn assign" id="assign4" disabled onclick="setStatus(4,'assigned')">Assign (locked)</button>
-        <span class="gate" id="gate4">Complete levels 3–5 to unlock Assign</span>
-      </div>
-      <div class="ai-label">AI-generated summary from the primary document. Verify against the source before assigning.</div>
-    </div>
-
-    <div class="lead" id="lead5" tabindex="0" data-cat="Statistics" data-src="KNBS" data-sev="Medium" data-status="new"
-         data-search="knbs quarterly gross domestic product report construction sector contracts third consecutive quarter statistics">
-      <div class="lead-top">
-        <span class="tag src-t">KNBS</span><span class="tag cat">Statistics</span><span class="tag md">Medium</span>
-        <span class="status-chip" id="chip5"></span>
-        <span class="when">Quarterly GDP Report · 6 Aug 2026</span>
-      </div>
-      <div class="lead-body">
-        <div>
-          <h2>Construction sector contracts for a third consecutive quarter, KNBS report shows</h2>
-          <p class="summary">The latest quarterly GDP report records a contraction in construction for the third quarter running, against growth in the wider economy. The report links the decline to lower cement consumption and reduced public infrastructure spending.</p>
-          <div class="eyebrow">Verbatim extract</div>
-          <div class="quote">"…the construction sector contracted for the third consecutive quarter, reflected in reduced cement consumption…"
-            <span class="ref"><span class="vtick">✓ verified in document</span> · Page 12, paragraph 1 · copied, not paraphrased</span></div>
-          <div class="eyebrow">Suggested angle</div>
-          <details class="fold" open><summary>Breaking: what the numbers say and who feels it</summary>
-            <div class="fb">The sector figure set against overall growth, with the report as the document of record and the reasons it gives.</div></details>
-          <details class="fold"><summary>More angles: investigative, longform, solutions</summary>
-            <div class="fb"><ul>
-              <li><b>Investigative:</b> does the decline track the fall in development spending in the Controller of Budget's reports?</li>
-              <li><b>Longform:</b> contractors and site workers on what three slow quarters have meant.</li>
-              <li><b>Solutions:</b> what sector bodies say would restart activity.</li></ul></div></details>
-          <details class="fold"><summary>Follow-up questions</summary>
-            <div class="fb"><ul><li>Are the figures provisional, and when are revisions due?</li><li>Which sub-sectors drove the contraction?</li><li>What do cement makers' own results show?</li></ul></div></details>
-          <div class="eyebrow">Ethics &amp; legal flags</div>
-          <p class="summary" style="margin-bottom:0">Aggregate statistics; no individuals named. State clearly if the figures are provisional. No court order restricts reporting.</p>
-          <div class="srcline">Primary source: <a href="#" onclick="toast('In the real tool this opens the report PDF at page 12');return false">knbs.or.ke/all-reports (PDF, page 12)</a></div>
-          <details class="prov"><summary>Provenance: where this lead came from</summary>
-            <div class="pb"><table>
-              <tr><td>Fetched</td><td><b>06:04:31</b> today, from the URL above</td></tr>
-              <tr><td>Live check</td><td><span class="ok-t">Document unchanged</span> since fetch (checksum re-verified)</td></tr>
-              <tr><td>Extraction</td><td>Native PDF text, pages 8–15. No OCR needed.</td></tr>
-              <tr><td>Summary by</td><td>Model claude-sonnet · prompt v1.3 · house rules v2</td></tr>
-              <tr><td>Snapshot</td><td><a href="#" onclick="toast('Opens the frozen copy exactly as fetched at 06:04');return false" style="color:var(--accent-ink)">Stored copy as fetched (PDF)</a></td></tr>
-            </table></div></details>
-        </div>
-        <div class="fc" data-lead="5">
-          <div class="fc-h"><span class="t">Fact-check ladder</span><span class="fc-score" id="score5">2 / 5 cleared</span></div>
-          <div class="lvl cleared"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">1</span><span class="lvl-t">Source exists &amp; matches</span><span class="st auto">Auto · passed</span></div>
-            <div class="lvl-b">URL resolves. PDF fetched 06:04, checksum logged and re-verified.</div></div>
-          <div class="lvl cleared"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">2</span><span class="lvl-t">Extraction is verbatim</span><span class="st auto">Auto · passed</span></div>
-            <div class="lvl-b">"third consecutive quarter": matched. Quote, page 12: matched.</div></div>
-          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">3</span><span class="lvl-t">Names, dates &amp; attribution</span><span class="st human">Your check</span></div>
-            <div class="lvl-b">
-              <label><input type="checkbox" onchange="ladder(5)"> Quarter and year read correctly from the report</label>
-              <label><input type="checkbox" onchange="ladder(5)"> Sector named correctly (construction, not real estate)</label></div></div>
-          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">4</span><span class="lvl-t">Corroboration</span><span class="st human">Your check</span></div>
-            <div class="lvl-b"><label><input type="checkbox" onchange="ladder(5)"> Earlier quarterly reports confirm the two previous contractions</label></div></div>
-          <div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">5</span><span class="lvl-t">Legal &amp; ethics clearance</span><span class="st human">Your check</span></div>
-            <div class="lvl-b"><label><input type="checkbox" onchange="ladder(5)"> Provisional status of the figures stated in the copy</label></div></div>
-          <div class="fc-note">Tick levels 3–5 to unlock Assign.</div>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn" onclick="setStatus(5,'docket')"><u>D</u>ocket</button>
-        <button class="btn" onclick="setStatus(5,'hold')"><u>H</u>old</button>
-        <button class="btn" onclick="setStatus(5,'dismissed')">Dismiss (<u>X</u>)</button>
-        <button class="btn assign" id="assign5" disabled onclick="setStatus(5,'assigned')">Assign (locked)</button>
-        <span class="gate" id="gate5">Complete levels 3–5 to unlock Assign</span>
-      </div>
-      <div class="ai-label">AI-generated summary from the primary document. Verify against the source before assigning.</div>
-    </div>
       <div class="ai-label">AI-generated summary from the primary document. Verify against the source before assigning.</div>
     </div>
   </div>
@@ -926,9 +798,6 @@ LOW: routine notices, appointments without controversy, procedural adjournments.
 <div class="src"><div class="grow"><div class="nm">ODPP</div><div class="meta">Checked 06:03 · new docs 06:03</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'ODPP')" title="Re-fetch now">↻</button></div>
 
 <div class="src" id="odpcRow"><div class="grow"><div class="nm">ODPC Determinations</div><div class="meta" id="odpcMeta">Unreachable since 04:10 · retry 08:30</div></div><span class="badge down" id="odpcBadge">Down</span><button class="refetch" onclick="retryODPC(this)" title="Retry now">↻</button></div>
- <div class="src"><div class="grow"><div class="nm">Controller of Budget — National Govt BIRR</div><div class="meta">Checked 06:04 · new docs 06:04</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Controller of Budget')" title="Re-fetch now">↻</button></div>
-
-<div class="src"><div class="grow"><div class="nm">KNBS — All Reports</div><div class="meta">Checked 06:04 · new docs 06:04</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'KNBS')" title="Re-fetch now">↻</button></div>
         <div class="sc-note">Switching a source off skips it on the next run; its history stays.</div>
       </div>
     </div>
@@ -968,9 +837,9 @@ Level 5 — Legal & ethics: court orders, sub judice, fairness in naming, data p
   </div>
 </div>
 <script>
-const TITLES = {1:'State moves to acquire 214 parcels in Nakuru for bypass',2:'ODPP approves charges over KES 480 million tender',3:'High Court certifies Finance Act petition as urgent',4:'Development spending at 38 per cent nine months into the year',5:'Construction sector contracts for a third consecutive quarter'};
-const META = {1:'Gazette · Land · High',2:'ODPP · Prosecutions · Medium',3:'Kenya Law · Courts · Medium',4:'Controller of Budget · Public Finance · Medium',5:'KNBS · Statistics · Medium'};
-let status = {1:'new',2:'new',3:'new',4:'new',5:'new'};
+const TITLES = {1:'State moves to acquire 214 parcels in Nakuru for bypass',2:'ODPP approves charges over KES 480 million tender',3:'High Court certifies Finance Act petition as urgent'};
+const META = {1:'Gazette · Land · High',2:'ODPP · Prosecutions · Medium',3:'Kenya Law · Courts · Medium'};
+let status = {1:'new',2:'new',3:'new'};
 let lastAction = null;
 let toastTimer;
 function toast(msg, undoable){
