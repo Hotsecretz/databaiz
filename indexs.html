@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DatabAIz — working mockup</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0A2E55; --body:#333333; --accent:#0084FD; --accent-ink:#0065C4;
+  --green:#1A8754; --paper:#F9FAFF;
+  --t-amber:#E3F0FF; --t-green:#E8F7EF; --t-blue:#E3F0FF; --t-grey:#EEF2F7;
+  --line:#D7E3F0; --red:#C0392B; --t-red:#FBE9E7; --card:#FFFFFF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Lora',serif;background:#EAF2FB;color:var(--body);font-size:15px;line-height:1.5}
+.sans{font-family:'Poppins',sans-serif}
+button{font-family:'Poppins',sans-serif;cursor:pointer;transition:transform .06s, box-shadow .12s, background .12s}
+button:active{transform:scale(.97)}
+:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
+@media(max-width:760px){
+  .topbar{flex-wrap:wrap;height:auto;padding:6px 10px;row-gap:0}
+  .brand{width:100%;padding:6px 4px 2px;margin-right:0}
+  .tab{height:42px;padding:0 10px;font-size:12.5px}
+  .topbar .right{margin-left:auto}
+  .pill{display:none}
+  .helpbtn{width:34px;height:34px}
+}
+.topbar{background:var(--ink);color:#F3F8FF;display:flex;align-items:center;gap:6px;padding:0 18px;height:56px;position:sticky;top:0;z-index:80;box-shadow:0 2px 10px rgba(10,46,85,.18)}
+.brand{font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;letter-spacing:.09em;text-transform:uppercase;margin-right:14px}
+.brand span{color:#4FA8FF}
+.tab{font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;color:#A9C2DE;background:none;border:none;height:56px;padding:0 14px;border-bottom:3px solid transparent;position:relative}
+.tab:hover{color:#fff;background:rgba(255,255,255,.05)}
+.tab.on{color:#fff;border-bottom-color:var(--accent)}
+.tab .bub{position:absolute;top:9px;right:2px;background:var(--accent);color:#fff;font-size:9.5px;font-weight:700;border-radius:999px;min-width:16px;height:16px;display:none;align-items:center;justify-content:center;padding:0 4px}
+.tab .bub.show{display:inline-flex}
+.topbar .right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.pill{font-family:'Poppins',sans-serif;font-size:11px;padding:4px 11px;border-radius:999px;background:rgba(255,255,255,.1);display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:#6FBF8A}
+.helpbtn{width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);background:none;color:#F3F8FF;font-size:14px;font-weight:700}
+.helpbtn:hover{background:rgba(255,255,255,.12)}
+.page{display:none;max-width:1300px;margin:16px auto;padding:0 16px}
+.page.on{display:block}
+.wrap{display:grid;grid-template-columns:275px 1fr;gap:16px}
+@media(max-width:980px){.wrap{grid-template-columns:1fr}}
+.rail{display:flex;flex-direction:column;gap:14px;position:sticky;top:70px;align-self:start;max-height:calc(100vh - 84px);overflow:auto}
+@media(max-width:980px){.rail{position:static;max-height:none}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(10,46,85,.05)}
+.panel-h{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--accent-ink);padding:11px 14px;border-bottom:1px solid var(--line);background:var(--paper);display:flex;justify-content:space-between;align-items:center}
+.src{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #E7EEF5;font-size:13px}
+.src:last-of-type{border-bottom:0}
+.src .nm{color:var(--ink);font-weight:600}
+.src .meta{font-family:'Poppins',sans-serif;font-size:10px;color:#6B7A8C}
+.src .grow{flex:1}
+.badge{font-family:'Poppins',sans-serif;font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:999px;flex-shrink:0}
+.badge.ok{background:var(--t-green);color:var(--green)}
+.badge.stale{background:var(--t-amber);color:var(--accent-ink)}
+.badge.down{background:var(--t-red);color:var(--red)}
+.refetch{border:1px solid var(--line);background:#fff;border-radius:7px;font-size:12px;color:var(--ink);padding:4px 9px;flex-shrink:0}
+.refetch:hover{background:var(--t-amber);border-color:var(--accent)}
+.refetch.spin{animation:spin .8s linear}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.manual-add{display:block;width:calc(100% - 24px);margin:10px 12px 12px;padding:10px;border:1.5px dashed var(--accent);background:none;border-radius:9px;color:var(--accent-ink);font-size:12px;font-weight:600}
+.manual-add:hover{background:var(--t-amber)}
+.qitem{padding:10px 12px;border-bottom:1px solid #E7EEF5;font-size:13px;cursor:pointer}
+.qitem:hover{background:var(--paper)}
+.qitem:last-child{border-bottom:0}
+.qitem .qt{color:var(--ink);line-height:1.35}
+.qitem .qm{font-family:'Poppins',sans-serif;font-size:10px;color:#6B7A8C;margin-top:2px}
+.qitem .qm b{color:var(--accent-ink)}
+.dhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.dhead h1{font-size:24px;color:var(--ink)}
+.dhead .sans{font-size:11.5px;color:#6B7A8C}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+.stat .n{font-size:23px;font-weight:700;color:var(--ink)}
+.stat .l{font-family:'Poppins',sans-serif;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#6B7A8C}
+.stat.hot .n{color:var(--red)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.filters select,.filters input{font-family:'Poppins',sans-serif;font-size:12.5px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--body)}
+.filters select:hover,.filters input:hover{border-color:var(--accent)}
+.filters input{flex:1;min-width:160px}
+.empty{background:var(--card);border:1.5px dashed var(--line);border-radius:14px;padding:30px;text-align:center;font-family:'Poppins',sans-serif;font-size:13px;color:#6B7A8C;display:none}
+.empty.show{display:block}
+.empty b{color:var(--ink)}
+.lead{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:box-shadow .15s,border-color .15s,opacity .2s;margin-bottom:14px;box-shadow:0 1px 5px rgba(10,46,85,.05)}
+.lead.sel{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,132,253,.16)}
+.lead.hidden{display:none}
+.lead-top{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--paper);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tag{font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:7px}
+.tag.src-t{background:var(--ink);color:#F3F8FF}
+.tag.cat{background:var(--t-blue);color:var(--ink)}
+.tag.hi{background:var(--t-red);color:var(--red)}
+.tag.md{background:var(--t-amber);color:var(--accent-ink)}
+.tag.cluster{background:#fff;border:1px dashed var(--accent);color:var(--accent-ink);text-transform:none;letter-spacing:0;cursor:pointer}
+.tag.cluster:hover{background:var(--t-amber)}
+.lead-top .when{font-family:'Poppins',sans-serif;font-size:10.5px;color:#6B7A8C;margin-left:auto}
+.status-chip{font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:7px;display:none}
+.status-chip.show{display:inline-block}
+.status-chip.docket{background:var(--t-blue);color:var(--ink)}
+.status-chip.hold{background:var(--t-amber);color:var(--accent-ink)}
+.status-chip.dismissed{background:var(--t-grey);color:#5A6B7D}
+.status-chip.assigned{background:var(--t-green);color:var(--green)}
+.lead-body{padding:16px 18px;display:grid;grid-template-columns:1.45fr 1fr;gap:20px}
+@media(max-width:880px){.lead-body{grid-template-columns:1fr}}
+.lead h2{font-size:18px;color:var(--ink);line-height:1.35;margin-bottom:7px}
+.summary{font-size:14px;margin-bottom:10px}
+.eyebrow{font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--accent-ink);margin:12px 0 5px}
+.quote{border-left:3px solid var(--accent);background:var(--paper);padding:9px 12px;font-style:italic;font-size:13.5px;border-radius:0 8px 8px 0}
+.quote .ref{display:block;font-style:normal;font-family:'Poppins',sans-serif;font-size:10px;color:#6B7A8C;margin-top:4px}
+.quote .vtick{color:var(--green);font-weight:700}
+details.fold{border:1px solid var(--line);border-radius:9px;background:#fff;margin-bottom:6px}
+details.fold summary{cursor:pointer;padding:9px 13px;font-family:'Poppins',sans-serif;font-size:12.5px;font-weight:600;color:var(--ink);list-style:none;display:flex;gap:8px;align-items:center}
+details.fold summary:hover{background:var(--paper)}
+details.fold summary::-webkit-details-marker{display:none}
+details.fold summary::before{content:"▸";color:var(--accent);transition:transform .15s}
+details.fold[open] summary::before{transform:rotate(90deg)}
+details.fold .fb{padding:0 13px 11px;font-size:13.5px}
+details.fold .fb ul{padding-left:16px}
+details.fold .fb li{margin-bottom:3px}
+.flag-note{background:var(--t-red);border-radius:9px;padding:9px 12px;font-size:13px}
+.flag-note b{color:var(--red)}
+.srcline{margin-top:10px;font-family:'Poppins',sans-serif;font-size:11.5px}
+.srcline a{color:var(--accent-ink);word-break:break-all}
+.srcline a:hover{text-decoration:underline}
+.prov{margin-top:9px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}
+.prov summary{cursor:pointer;padding:8px 13px;font-family:'Poppins',sans-serif;font-size:11.5px;font-weight:600;color:#5A6B7D;list-style:none;display:flex;gap:6px;align-items:center}
+.prov summary:hover{color:var(--accent-ink)}
+.prov summary::-webkit-details-marker{display:none}
+.prov summary::before{content:"◈";color:var(--accent)}
+.prov .pb{padding:2px 13px 11px}
+.prov table{width:100%;border-collapse:collapse;font-family:'Poppins',sans-serif;font-size:10.5px}
+.prov td{padding:4px 6px 4px 0;vertical-align:top;border-bottom:1px solid #E3ECF5}
+.prov tr:last-child td{border-bottom:0}
+.prov td:first-child{color:#6B7A8C;white-space:nowrap;width:110px}
+.prov td b{color:var(--ink);font-weight:600}
+.ok-t{color:var(--green);font-weight:600}
+.fc{background:var(--t-blue);border:1px solid #CBD6E4;border-radius:13px;padding:13px;align-self:start}
+.fc-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.fc-h .t{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+.fc-score{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:700;color:#fff;background:var(--accent);padding:3px 10px;border-radius:999px}
+.fc-score.pass{background:var(--green)}
+.lvl{background:#fff;border:1px solid #D9E0EA;border-radius:9px;margin-bottom:6px;overflow:hidden}
+.lvl-h{display:flex;align-items:center;gap:8px;padding:9px 11px;cursor:pointer}
+.lvl-h:hover{background:#FBFCFE}
+.lvl-n{font-family:'Poppins',sans-serif;font-size:9.5px;font-weight:700;color:#fff;background:var(--ink);width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lvl.cleared .lvl-n{background:var(--green)}
+.lvl.flagged .lvl-n{background:var(--red)}
+.lvl-t{font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;color:var(--ink);flex:1}
+.st{font-family:'Poppins',sans-serif;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:6px;flex-shrink:0}
+.st.auto{background:var(--t-green);color:var(--green)}
+.st.human{background:var(--t-amber);color:var(--accent-ink)}
+.st.fail{background:var(--t-red);color:var(--red)}
+.lvl-b{padding:0 11px 10px 38px;font-size:12.5px;display:none}
+.lvl.open .lvl-b{display:block}
+.lvl-b label{display:flex;gap:9px;align-items:flex-start;margin-bottom:6px;cursor:pointer;font-size:12.5px;padding:3px 4px;border-radius:6px}
+.lvl-b label:hover{background:var(--paper)}
+.lvl-b input{margin-top:3px;accent-color:var(--green);width:15px;height:15px;flex-shrink:0;cursor:pointer}
+.fc-note{font-family:'Poppins',sans-serif;font-size:10px;color:#5B6B80;margin-top:9px;line-height:1.5}
+.resolve{margin-top:5px;font-size:11px;font-weight:600;background:var(--ink);color:#F3F8FF;border:none;border-radius:7px;padding:6px 11px}
+.resolve:hover{background:#082444}
+.pulse{animation:pulse 1.6s ease-in-out 3}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,132,253,0)}50%{box-shadow:0 0 0 6px rgba(0,132,253,.25)}}
+.actions{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--line);background:var(--paper);flex-wrap:wrap;align-items:center}
+.btn{font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.btn:hover{background:var(--t-grey);border-color:#C3D4E6}
+.btn u{text-decoration:underline;text-underline-offset:2px;text-decoration-color:var(--accent)}
+.btn.assign{background:var(--green);color:#fff;border-color:var(--green)}
+.btn.assign:hover{filter:brightness(1.07)}
+.btn.assign:disabled{background:#9AA5B4;border-color:#9AA5B4;cursor:not-allowed;filter:none}
+.gate{font-family:'Poppins',sans-serif;font-size:10.5px;color:var(--accent-ink);margin-left:auto}
+.ai-label{font-family:'Poppins',sans-serif;font-size:10px;color:#6B7A8C;padding:0 18px 12px;background:var(--paper)}
+.dock-group{margin-bottom:18px}
+.dock-h{font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.dock-h .cnt{background:var(--t-amber);border-radius:999px;padding:1px 9px;font-size:10px}
+.dock-item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-bottom:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dock-item .dt{flex:1;min-width:220px}
+.dock-item .dt .t{font-weight:600;color:var(--ink);font-size:14.5px}
+.dock-item .dt .m{font-family:'Poppins',sans-serif;font-size:10.5px;color:#6B7A8C;margin-top:2px}
+.dock-item .btn{padding:7px 13px;font-size:11.5px}
+.dock-empty{font-family:'Poppins',sans-serif;font-size:13px;color:#6B7A8C;background:var(--card);border:1.5px dashed var(--line);border-radius:12px;padding:22px;text-align:center}
+.dock-empty b{color:var(--ink)}
+.tl-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 24px;max-width:860px}
+.tl-card h2{font-size:20px;color:var(--ink);margin-bottom:2px}
+.tl-sub{font-family:'Poppins',sans-serif;font-size:11.5px;color:#6B7A8C;margin-bottom:16px}
+.tl{border-left:3px solid var(--accent);margin-left:8px;padding-left:22px}
+.tl-item{position:relative;padding-bottom:18px}
+.tl-item:last-child{padding-bottom:4px}
+.tl-item::before{content:"";position:absolute;left:-30px;top:4px;width:13px;height:13px;border-radius:50%;background:var(--accent);border:3px solid var(--card)}
+.tl-item.now::before{background:var(--green)}
+.tl-item .td{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:700;color:var(--accent-ink);text-transform:uppercase;letter-spacing:.06em}
+.tl-item.now .td{color:var(--green)}
+.tl-item .tt{font-weight:600;color:var(--ink);font-size:15px;margin:1px 0 2px}
+.tl-item .tm{font-size:13px}
+.tl-item .tsrc{font-family:'Poppins',sans-serif;font-size:10.5px;margin-top:3px}
+.tl-item .tsrc a{color:var(--accent-ink)}
+.set-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1000px}
+@media(max-width:860px){.set-grid{grid-template-columns:1fr}}
+.set-card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.set-card .sc-h{font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--accent-ink);padding:11px 15px;background:var(--paper);border-bottom:1px solid var(--line)}
+.set-card .sc-b{padding:13px 15px}
+.set-card textarea{width:100%;min-height:150px;font-family:'Lora',serif;font-size:13px;line-height:1.55;border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:#fff;color:var(--body);resize:vertical}
+.set-card .sc-note{font-family:'Poppins',sans-serif;font-size:10.5px;color:#6B7A8C;margin:8px 0}
+.savebtn{font-size:12px;font-weight:600;background:var(--ink);color:#F3F8FF;border:none;border-radius:8px;padding:8px 16px}
+.savebtn:hover{background:#082444}
+.set-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #E7EEF5;font-size:13.5px}
+.set-row:last-child{border-bottom:0}
+.set-row .grow{flex:1}
+.switch{width:38px;height:21px;border-radius:999px;background:#C3D4E6;border:none;position:relative;flex-shrink:0}
+.switch::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2.5px;left:3px;transition:left .15s}
+.switch.on{background:var(--green)}
+.switch.on::after{left:19px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--ink);color:#F3F8FF;font-family:'Poppins',sans-serif;font-size:13px;padding:11px 20px;border-radius:999px;transition:transform .25s;z-index:99;box-shadow:0 8px 26px rgba(0,0,0,.28);display:flex;gap:14px;align-items:center;max-width:92vw}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast button{background:none;border:none;color:#4FA8FF;font-weight:700;font-size:12.5px;padding:0}
+.overlay{position:fixed;inset:0;background:rgba(10,46,85,.45);z-index:90;display:none;align-items:center;justify-content:center;padding:18px}
+.overlay.show{display:flex}
+.modal{background:var(--card);border-radius:18px;max-width:560px;width:100%;padding:26px 28px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:88vh;overflow:auto}
+.modal h3{font-size:20px;color:var(--ink);margin-bottom:6px}
+.modal p{font-size:14px;margin-bottom:10px}
+.modal .mfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;align-items:center}
+.modal input[type=text]{width:100%;font-family:'Poppins',sans-serif;font-size:13px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;margin:6px 0 2px}
+.tour-step{display:flex;gap:12px;margin-bottom:12px}
+.tour-n{font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;color:#fff;background:var(--accent);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tour-step .ts-t{font-weight:600;color:var(--ink)}
+.tour-step .ts-d{font-size:13.5px}
+.kbd-row{font-family:'Poppins',sans-serif;font-size:12px;color:#5A6B7D;background:var(--t-grey);border-radius:9px;padding:9px 13px;margin-top:8px}
+kbd{background:var(--ink);color:#F3F8FF;border-radius:5px;padding:1.5px 7px;font-family:'Poppins',sans-serif;font-size:11px;margin:0 1px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">Datab<span>AIz</span></div>
+  <button class="tab on" data-page="digest" onclick="go('digest')">Digest</button>
+  <button class="tab" data-page="docket" onclick="go('docket')">Docket <span class="bub" id="dockBub">0</span></button>
+  <button class="tab" data-page="timelines" onclick="go('timelines')">Timelines</button>
+  <button class="tab" data-page="settings" onclick="go('settings')">Settings</button>
+  <div class="right">
+    <span class="pill"><span class="dot"></span> LLM live</span>
+    <span class="pill sans">Run 06:04 · next 14:00</span>
+    <button class="helpbtn" onclick="openTour()" title="How this works">?</button>
+  </div>
+</div>
+<div class="page on" id="page-digest">
+<div class="wrap">
+  <div class="rail">
+    <div class="panel">
+      <div class="panel-h"><span>Source health</span><span style="color:#6B7A8C;font-weight:500;text-transform:none;letter-spacing:0">8 / 10 active</span></div>
+     <div class="set-row"><span class="grow"><b>Kenya Law — Judgments & Regional Courts</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Kenya Law')"></button></div>
+<div class="set-row"><span class="grow"><b>Kenya Gazette</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Gazette')"></button></div>
+<div class="set-row"><span class="grow"><b>Hansard — National Assembly</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Hansard NA')"></button></div>
+<div class="set-row"><span class="grow"><b>Hansard — Senate</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Hansard Senate')"></button></div>
+<div class="set-row"><span class="grow"><b>Senate Bills</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Senate Bills')"></button></div>
+<div class="set-row"><span class="grow"><b>National Assembly Bills</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'NA Bills')"></button></div>
+<div class="set-row"><span class="grow"><b>Parliamentary Statement Tracker</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'Statement Tracker')"></button></div>
+<div class="set-row"><span class="grow"><b>Auditor General — National Govt</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'AG National')"></button></div>
+<div class="set-row"><span class="grow"><b>Auditor General — Counties</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'AG Counties')"></button></div>
+<div class="set-row"><span class="grow"><b>Auditor General — Specialised & Special</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'AG Special')"></button></div>
+<div class="set-row"><span class="grow"><b>ODPP</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'ODPP')"></button></div>
+<div class="set-row"><span class="grow"><b>ODPC Determinations</b> · daily 06:00</span><button class="switch on" onclick="flip(this,'ODPC')"></button></div>
+      <button class="manual-add" onclick="openModal('addModal')">+ Add a document by link</button>
+    </div>
+    <div class="panel">
+      <div class="panel-h">Needs an editor first</div>
+      <div id="queueList"><div class="qitem"><div class="qt">Loading…</div></div></div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="dhead"><h1>Morning digest</h1><span class="sans">Wednesday 6 August · sorted by severity, then time</span></div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="statNew">3</div><div class="l">Leads shown</div></div>
+      <div class="stat"><div class="n">11</div><div class="l">From official records</div></div>
+      <div class="stat hot"><div class="n">2</div><div class="l">Legal-risk flags</div></div>
+      <div class="stat"><div class="n" id="statAwait">3</div><div class="l">Awaiting checks</div></div>
+    </div>
+    <div class="filters">
+<select id="fCat" onchange="applyFilters()">
+  <option value="">Category: All</option>
+  <option>Courts</option>
+  <option>Land</option>
+  <option>Legislation</option>
+  <option>Parliament</option>
+  <option>Prosecutions</option>
+  <option>Public Finance</option>
+  <option>Data Protection</option>
+</select>
+      <select id="fSrc" onchange="applyFilters()">
+  <option value="">Source: All</option>
+  <option>Kenya Law</option>
+  <option>Gazette</option>
+  <option>Hansard NA</option>
+  <option>Hansard Senate</option>
+  <option>Senate Bills</option>
+  <option>NA Bills</option>
+  <option>Statement Tracker</option>
+  <option>Auditor General</option>
+  <option>ODPP</option>
+  <option>ODPC</option>
+</select>    
+      <select id="fSev" onchange="applyFilters()"><option value="">Severity: All</option><option>High</option><option>Medium</option></select>
+      <select id="fStat" onchange="applyFilters()"><option value="">Status: All</option><option value="new">New</option><option value="docket">In docket</option><option value="hold">On hold</option><option value="assigned">Assigned</option><option value="dismissed">Dismissed</option></select>
+      <input type="text" id="fSearch" placeholder="Search leads, case numbers, names…" oninput="applyFilters()">
+    </div>
+    <div class="empty" id="emptyMsg">No leads match these filters. <b>Clear a filter</b> or adjust the search.</div>
+    <div id="leadsContainer"></div>
+  </div>
+</div>
+</div>
+<div class="page" id="page-docket">
+  <div class="dhead"><h1>Docket</h1><span class="sans">Everything you have moved out of the digest, grouped by status</span></div>
+  <div id="dockBody"></div>
+</div>
+<div class="page" id="page-timelines">
+  <div class="dhead"><h1>Timelines</h1><span class="sans">Every stored case number, gazette number and name becomes a story history</span></div>
+  <div class="tl-card">
+    <h2>Petition E123 of 2026 — the Finance Act challenge</h2>
+    <div class="tl-sub">Built automatically from three leads that share the case number. Newest at the bottom.</div>
+    <div class="tl">
+      <div class="tl-item"><div class="td">14 July 2026 · Kenya Law</div><div class="tt">Petition E123 filed at the High Court</div><div class="tm">Challenge to sections of the Finance Act. First appearance in the daily filings list.</div><div class="tsrc"><a href="#" onclick="toast('Opens the filing record');return false">Source: daily filings, 14 Jul</a></div></div>
+      <div class="tl-item"><div class="td">28 July 2026 · Kenya Law</div><div class="tt">Conservatory orders sought; ruling reserved</div><div class="tm">The petitioners asked the court to suspend implementation pending hearing.</div><div class="tsrc"><a href="#" onclick="toast('Opens the cause list record');return false">Source: cause list, 28 Jul</a></div></div>
+      <div class="tl-item now"><div class="td">6 August 2026 · Kenya Law · today</div><div class="tt">Certified urgent; hearing within 14 days</div><div class="tm">Today's lead. The case now moves on a fast clock, and the hearing date will land inside this news cycle.</div><div class="tsrc"><a href="#" onclick="go('digest');jumpTo('lead3')">Open today's lead card →</a></div></div>
+    </div>
+  </div>
+  <br>
+  <div class="tl-card">
+    <h2>Nakuru Eastern Bypass — the land file</h2>
+    <div class="tl-sub">Two earlier leads share the project name with today's acquisition notice.</div>
+    <div class="tl">
+      <div class="tl-item"><div class="td">19 June 2026 · Gazette</div><div class="tt">Route corridor gazetted</div><div class="tm">First formal notice of the eastern bypass alignment.</div></div>
+      <div class="tl-item"><div class="td">22 July 2026 · Hansard</div><div class="tt">Compensation questioned in the House</div><div class="tm">An MP asked when valuation for affected owners would begin.</div></div>
+      <div class="tl-item now"><div class="td">6 August 2026 · Gazette · today</div><div class="tt">214 parcels listed for compulsory acquisition</div><div class="tm">Today's High-severity lead.</div><div class="tsrc"><a href="#" onclick="go('digest');jumpTo('lead1')">Open today's lead card →</a></div></div>
+    </div>
+  </div>
+</div>
+<div class="page" id="page-settings">
+  <div class="dhead"><h1>Settings</h1><span class="sans">The newsroom's personality lives here. Editors read it; an administrator edits it.</span></div>
+  <div class="set-grid">
+    <div class="set-card">
+      <div class="sc-h">House rules (config/house_rules.md)</div>
+      <div class="sc-b">
+        <textarea>Attribute every figure to the document, with a page number.
+Money in Sh, never KSH. British English throughout.
+Never state or imply guilt before a plea is taken.
+Name the court and station, not just "a court".
+Quotes are verbatim with page references, never paraphrased.
+Flag any lead naming a minor or a victim of a sexual offence.
+        Being alert to legal problems
+
+To what extent do you, as a newspaper journalist, think about the legal significance of what you are writing, subbing or proof-reading? The answer to that question should be at all times. But is that strictly true as far as you are concerned?
+
+Legal problems crop up often in the career of a journalist. So it is up to you to be able to spot them. You are not a trained lawyer. But as a trained journalist you should know enough about the law to be alerted when you come across a potential libel or contempt of court.
+
+If you, as a reporter, feature writer, sports writer, subeditor or editor have no idea what constitutes libel or contempt, you are at a big disadvantage as a professional journalist.
+
+And one day your ignorance of the law may cost your newspaper a lot of money and you, your reputation and perhaps even your job. You are failing in your duty, even as a junior reporter or a novice sub-editor, if you shut your mind to the legal consequences of what you are writing or subbing.
+
+Right from the beginning of your career, the onus is on you to acquaint yourself with those aspects of law that relate to the publishing of the written word. You, as a professional journalist, need a working knowledge of the basic principles of the law as it affects newspapers. This will help guide you in what you write or copy-edit.
+
+Whether you are a junior or senior journalist, it is up to you to point out to the news editor, the chief sub-editor or the managing editor any references in the story you are handling that appear to be legally dangerous. If they think it necessary, they will refer you to the newspaper's lawyer. He will vet the copy you are uncertain about.
+
+The lawyer is on your side
+
+It is important that you understand the lawyer's role when he checks editorial copy. He is an adviser. He is not a censor. It is not his job to kill a story for the reason that he does not think it desirable to publish it. That is an editor's business. He is the arbiter of what should and should not be published.
+
+It is the lawyer's job to say whether or not the story in its present form is safe to publish. If it isn't, then the lawyer should be able to suggest how, with rewriting, the story can be made safe. Sometimes considerable rewriting is necessary. On other occasions it may be a matter of just altering the wording of a phrase or two.
+
+Whatever changes are made on the advice of the lawyer should be read to him later, with the headline. Once the story has been made "safe" by the lawyer, never deviate from what he has advised.
+PRIVILEGE: What you need to know
+
+Privilege, in its legal sense, is something every journalist needs to be aware of.
+
+Broadly speaking, privilege is the right to publish reports of statements made without fear of legal action over anything said that is defamatory.
+
+There are two types of privilege: absolute and qualified.
+
+Absolute privilege gives a complete defence in law to the publication of anything said in certain circumstances, no matter how untrue or malicious the words might be.
+
+In Kenya, a prime example of absolute privilege concerns statements made by members of the National Assembly while Parliament is sitting. But it should be noted that statements made outside Parliament by Cabinet Ministers and MPs are not privileged in any way.
+
+Court proceedings, too, are covered by absolute privilege, provided the report is "fair and accurate and published contemporaneously," as they say in law. But there are certain provisos to bear in mind.
+
+For absolute privilege to apply, the proceedings have to be heard in public in Kenya. And reports bearing such privilege apply only to those published in Kenyan newspapers (media).
+
+And, most important, absolute privilege applies only provided there are no restrictions on the reporting of the judgment handed down by the magistrate or judge.
+
+If the magistrate or judge imposes restrictions, then those restrictions, if valid, negate privilege for those aspects of the case on which the restrictions have been placed.
+
+As a journalist you should be aware that absolute privilege covers only the actual court proceedings. That, in criminal cases, includes prosecution and defence statements, evidence, summing-up and verdicts - and the appropriate counterparts of these procedures in civil cases.
+
+It does not cover anything not actually stated in court, such as written statements handed to the judge or magistrate, pictorial material not intended as court exhibits, pleadings: plaints; or affidavits not argued or read in court.
+
+It should be understood, too, that absolute privilege does not extend to publication of anything that is obscene, blasphemous or seditious, even if it is contained in evidence given in open court.
+
+A court reporter covering a case of this kind must alert the editor immediately he or she returns from the assignment.
+The newspaper's lawyer also should be alerted. The editor will need the lawyer’s guidance in determining the risk of being charged or facing criminal libel if the story runs.
+
+As far as the legal and public yardstick for obscenity and blasphemy is concerned, a period of time can alter it somewhat. For instance, what was considered obscene 60 years ago would not necessarily be regarded as such today. The attitude of "right
+thinking members of society" (to quote a legal phrase) influences these matters considerably.
+
+It is unwise to publish a court report after an unnecessary period has passed following the pronouncement of the verdict. And it should be noted that non-contemporaneous reports lose the protection of absolute privilege. But they still have qualified privilege, provided the necessary conditions are adhered to.
+
+Qualified privilege demands that a report is fair and accurate and published without malice. Medical Board and similar quasi-judicial proceedings, if open to the Press, would bear qualified privilege.
+
+Fair and accurate reports of a wide range of meetings when the public has a right to attend are also privileged.
+
+Qualified privilege also applies where there is a common interest in the statement made. Common interest would, for instance, exist between a bishop of a diocese and a parishioner concerning the behaviour of a local priest. In such a case a complaint could be addressed to the bishop by a parishioner.
+
+In 1984 it was held by the High Court of Kenya that in certain circumstances the public of Kenya has a common interest with a newspaper in reports of public matters.
+
+Headlines and Intros: It is important to understand that headlines and intros for court reports are not covered by privilege, unless they are also fair and accurate. This means reporters and sub-editors must adhere strictly to the court proceedings and not exaggerate or otherwise veer away from what was actually said in court.
+
+For instance, it would be wrong to write Alcoholic in Court in a headline for a case about someone who was guilty of being drunk and disorderly, which can happen anyway to a person who is not a habitual drinker.
+
+Equally it would be wrong to write as a headline Sex Maniac Found Guilty when in fact it was his first offence and he had been found guilty of pinching a woman's bottom in a supermarket.
+
+In these cases, where no evidence of addiction is given in court and they were first offences, the culprits would have strong grounds for complaint, and possible legal action against the newspaper.
+
+Journalists must remember that actual malice (active ill-will) can destroy the defence of qualified privilege.
+
+Actual malice becomes a factor when a report reflects an intention to hurt somebody rather than to merely impart information.
+
+CONTEMPT: A pitfall for the unwary
+
+Various definitions of contempt of court have been given over the years. Here is one of them: 
+
+Any conduct or action that tends to bring the authority and administration of the law into disrespect or disregard, or will interfere with or prejudice the parties litigating, or their witnesses, during litigation.
+
+Strictly speaking there are two kinds of contempt of court:
+
+1. Contempt committed in the face of the court.
+
+2. Indirect contempt (or contempt out of court). 
+
+Both types are potential hazards for the unwary court reporter.
+
+An example of contempt in the face of the court would be if a reporter was ordered out of court for a valid reason and later sneaked back in. He would be guilty of violating an order of the court. In other words, he would be in contempt.
+
+If, on the other hand, the reporter wrote a grossly inaccurate story emanating from court proceedings, he would be guilty of out-of-court contempt.
+
+The crime (yes, that's what it is) of contempt may take several forms. But the danger particularly to be guarded against by newspapers is the publication of matter calculated to prejudice pending judicial proceedings, or the administration of justice in general.
+
+"Pending" is a key word. A criminal case is considered as pending immediately if there has been an arrest. In civil proceedings, the filing of a plaint or the institution of an application marks the beginning of the "pending" stage. A case ceases to be pending only after the expiration of the period during which notice of appeal is supposed to be given.
+
+If notice of appeal is given, the case continues to be sub judice (in course of trial, pending decision of a competent court) until the appeal has been heard and determined. It is important that journalists realise that any attempt in print to prejudge an issue in dispute, and any attempt to attack the reliability of a party or witness, constitutes contempt of court. Also considered contempt is the publication of matter prejudicial to a party's case. In other words, the law lays it down that newspapers will be in contempt of court if they publish anything that scandalises the court, interferes with judicial proceedings, or publishes any matter that is intended to prejudice - or that is held to prejudice - a pending trial. It can also be contempt if a newspaper publishes a report of a matter heard privately by a judge in Chambers. The punishment for contempt of court can be imprisonment. The law of contempt is tough for two reasons:
+
+1.	To preserve the innocent-until-proven-guilty principle, and
+2.	To preserve the dignity of the court.
+
+How, you might ask, do you scandalise a court? Well, you do that if you write anything that might be said to lower the authority of the court, or to ridicule a judge, or question his competence in handling a case.
+
+Remember These Things About Contempt:
+
+•	An editor should never comment on a case that is sub judice.
+•	A reporter or feature writer should never attempt to investigate a pending trial.
+•	The point with contempt is not whether the publication in fact interferes with the course of justice. All it has to do is to tend to interfere with it.
+•	It is contempt to criticise a judicial act, if that criticism interferes with the administration of justice. But it is not contempt to criticise the purely ministerial act of the court.
+
+All of these should alert you to the dangers for journalists that are inherent in the crime of contempt of court.
+
+DEFAMATION: Know your limitations
+
+Libel is defamation. So is slander. But what is defamation? Law-trained professionals through the years have found it difficult to agree on a definitive definition. The following is contained in The Newspaperman's Guide to the Law. The authors - Kelsey William Stuart, B.A. LL.B., LL.M. and Weston Klopper, B.A. Barrister-at-law of the Middle Temple (London) suggest that this incorporates most of the criteria:
+
+Defamation is committed when, with intent to injure, objectively regarded matter is published of and concerning a person which tends to lower him in the estimation of the general body of, right-thinking men, or which causes him to be shunned or avoided or exposes him to hatred, contempt or ridicule.
+
+Stuart and Klopper mean that the essential ingredients of defamation are:
+
+•	Publication, that is expression or conveyance to a third party, of defamatory matter, concerning a person.
+•	With intent to injure in a legal sense means "viewed without bias".
+
+Animus injuriandi, in a literal sense, means the intention of subjecting another to damage of his or her personality.
+
+SLANDER is defamation through the spoken word, or through gestures. A deaf mute can be guilty of slander.
+
+LIBEL is defamation in a permanent form, such as writing or printing. As newsmen and women, our awareness of defamation obviously needs to be focused on libel. Court actions for libel can come about in several ways: from cartoons, written or printed words, or telegrams, to mention a few. Typewritten or hand-written copy submitted to an editor – even if not reproduced in the newspaper - may technically constitute libel.
+
+Libellous material may be found in any part of a newspaper features, cartoons, letters to the editor, photographs and captions. Advertisements, too, can be libellous.
+
+Identification of the person concerned may be direct or indirect: intentional or unintentional. The choice of what the writer intended to be a fictitious name, but which turned out to be the name of a living person, has led to successful libel actions against newspapers.
+
+Where a libellous imputation has been made against a class or group of people, each member of that class or group is entitled to bring an action against the newspaper if, as Stuart and Klopper point out, "the surrounding circumstances show that reasonable men would be likely to understand the imputation to refer to him as an individual." Each case must be considered by the court according to its own circumstances.
+
+Points to consider when assessing a possible libel:
+
+•	The impression the ordinary reader would be likely to gain from the story.
+•	The content of headline and sub-headings. 
+•	Other reports, photographs and advertisements appearing on the same page. 
+•	The possibility of innuendo.
+
+Innuendo means "hidden meaning." Lawyers refer to it as "assigned sense."
+
+On this subject Stuart and Klopper say:
+
+The hidden or secondary meaning may be intentional or inadvertent. If reasonable men understand the words in a defamatory sense, then they are actionable. What the author intended them to mean is not the criterion. Consequently, if an author publishes a statement that he believes to be innocent, but that is defamatory by reason of facts unknown to him, but known to his readers, then, unless objectively regarded, animus injuriandi is proved to be absent, he will be liable.
+
+
+
+PHOTOGRAPHS AND CAPTIONS
+
+In newspaper and magazine work carelessness can lead to libel. In one defamation case in Kenya a newspaper published a picture of a car lying in the road after an accident. The number plate of the car was clearly visible.
+
+Under the picture was a caption-story saying the driver of the car had run away without reporting to the police, and without taking the necessary action according to law.
+
+Because the number plate was visible in the picture, the driver of the car could be identified by people who knew his car. Thus, the imputation in the story was that he was a person who had no sense of responsibility and deliberately ignored the law.
+
+He succeeded in his case after proving he had not run away from the scene of the accident.
+
+Care should be taken when choosing a stock photo to illustrate a news story or feature: If you have a story about prostitutes lining up for treatment of venereal disease, do not illustrate it with just any picture of women forming a queue, even if you do intend to mask the faces with black or white strips.
+
+Those women in the picture might still be identifiable - and they may be doing nothing more than lining up to register as voters, or queuing outside a shop for bargains during a sale.
+
+To suggest that they are VD-infected prostitutes would certainly be defamatory.
+
+Incidentally, when using the word "prostitute" - either in a caption or a story - be very careful, particularly if the woman is identifiable from what you intend to publish.
+
+The word is loaded. Many newspapers the world over have learnt how dangerous that word can be. And the lesson cost them a lot of money.
+
+Other words in the same dangerous category are "communist" and "fascist". Be wary of them, too. Both these words are considered to be derogatory by large numbers of people.
+
+
+It is worth remembering that libel is a tort (a civil wrong). A person has to prove he has been wronged in order to succeed in a libel action. He has to show that what has been published is in fact defamatory of him.
+
+HEADLINES, SUB-HEADINGS
+
+As Stuart and Klopper emphasise, the size, spread, positioning and contents of headlines and sub-headings often play an important part in construing a piece of writing.
+
+While the whole piece (including the headings) must be read as one, if the heading is not a fair index of what follows, it may be actionable on its own.
+
+For example, headlines given to reports of court cases are often not “straight” reflections of the proceedings but voluntary statements or comments of the sub-editor handling the story.
+
+Headlines and sub-headings on court stories are not covered by the defence of qualified privilege, unless they are a fair reflection of the material contained in the report, which in turn must be a fair reflection of the court proceedings.
+
+DEFAMATION IN LAYOUT: Headlines may indicate animus injuriandi and if they are positioned near a photograph of a person may lead to a construction construed as being adverse to the person depicted in the picture. This was not intended by either the reporter or the sub-editor handling the layout. But it could nevertheless be actionable.
+
+This emphasises the need for editors and sub-editors to be aware of the dangers of defamation in a wider sense than just words in the story text.
+
+In fact, as the last line of defence, the night editor should list the possibility of defamation in layout as one of the many checks he or she should be carrying out with each issue of the newspaper.
+
+
+STATEMENTS FROM POLITICIANS
+
+The best advice is - take great care! Be wary of statements by politicians made on occasions that are not privileged (in other words, outside Parliament).
+
+For instance, a politician ( no matter how "big" he or she is) may give a reporter a statement outside Parliament in which he claims that a political rival is harassing wananchi, or is favouring himself in the allocation of plots, or is getting his family and friends jobs through nepotism. Any of these statements may be defamatory. No matter that he is an MP, a Cabinet Minister even. The statement, if published, could be actionable.
+
+If a businessman claims he lost a big order because of the incompetence of a certain official whom he names, this too could lead to a libel action.
+
+A reporter or sub-editor who is in doubt whether or not a statement is defamatory is duty bound to bring the words to the attention of the news editor or chief sub-editor, or managing editor. If they, too, are in doubt, the story should be vetted by the company's lawyer.
+
+THE KENYAN LAW OF DEFAMATION
+
+There are four sections to Kenya's defamation law:
+
+1.	The Defamation Act of 1970.
+2.	English statutes of general application before 1897.
+3.	 English common law, which has only a persuasive effect in the courts of Kenya. It is not binding. But if there is no local authority to cover a particular case then the court will probably apply English common law in a libel case.
+4.	Case law of the Kenya High Court and the Courts of Appeal of East Africa and of Kenya.
+
+THERE ARE FIVE MAIN DEFENCES TO LIBEL:
+
+1. (a) That the words were never published.
+(b) That the words do not refer to the claimant. 
+(c) That the words are not defamatory.
+
+2. The publication was authorised by the claimant or published with his or her consent.
+
+3. Justification or truth.
+
+4. Privilege: absolute or qualified.
+
+5. Fair comment on a matter of public interest.
+
+The defence referred to in the three section in (1) are reasonably straightforward. But (b) and (c) depend on the construction of the words used in the story.
+
+Every word in a report is important when it comes to defending a libel action. Any loose or vaguely inaccurate reporting can be damaging to the newspaper's case.
+
+Ref. No. 2: If, for example, a person sends a letter to a newspaper for publication, he cannot later say that the letter he sent contained words which are defamatory of him, and succeed in a court action. By sending the letter to the newspaper he clearly indicated he wanted it published, unless he marked the letter clearly with the words "Not for publication".
+
+Ref. No. 3: The defence of justification or truth is dealt with under Section 14 of Kenya’s 1970 Defamation Act,
+
+The defence of justification is based on proof that the words complained of were true in substance and in fact. To establish a plea of justification, a newspaper must prove that the defamatory imputation is true. It is not enough for the newspaper to prove it believed the imputation to be true, even though it was published as a belief only.
+
+In other words, if you say of a man that you believe he committed a murder you cannot justify the statement by merely proving that this is what you believed. You can only justify it by proving the fact of the murder beyond reasonable doubt, as in a criminal case.
+
+But provided you can prove that the sting of the libel is true, it is not necessary to prove that every other allegation in the article is true.
+</textarea>
+        <div class="sc-note">The model receives this file in every summarise call. Change it here, and tomorrow's digest obeys the new version.</div>
+        <button class="savebtn" onclick="toast('House rules saved · applies from the next run (14:00)')">Save changes</button>
+      </div>
+    </div>
+    <div class="set-card">
+      <div class="sc-h">Severity rubric (config/severity_rubric.md)</div>
+      <div class="sc-b">
+        <textarea>HIGH: affects many identifiable people, large public money, tight statutory deadlines, or senior public officials. Editor sees it first.
+MEDIUM: significant but not urgent; institutional or procedural steps in running matters.
+LOW: routine notices, appointments without controversy, procedural adjournments.</textarea>
+        <div class="sc-note">The model must state which rule it applied, and the editor can always overrule on the card.</div>
+        <button class="savebtn" onclick="toast('Severity rubric saved · applies from the next run')">Save changes</button>
+      </div>
+    </div>
+    <div class="set-card">
+      <div class="sc-h">Sources &amp; schedule (config/sources.yaml)</div>
+      <div class="sc-b">
+        <!-- EXISTING — rename for clarity -->
+<div class="src"><div class="grow"><div class="nm">Kenya Law — Judgments & Regional Courts</div><div class="meta">Checked 06:02 · new docs 06:02</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Kenya Law')" title="Re-fetch now">↻</button></div>
+
+<div class="src"><div class="grow"><div class="nm">Kenya Gazette</div><div class="meta">Checked 06:02 · new docs 06:02</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Gazette')" title="Re-fetch now">↻</button></div>
+
+<!-- EXISTING — split into two -->
+<div class="src"><div class="grow"><div class="nm">Hansard — National Assembly</div><div class="meta">Checked 06:03 · nothing new for 2 days</div></div><span class="badge stale">Stale</span><button class="refetch" onclick="refetch(this,'Hansard NA')" title="Re-fetch now">↻</button></div>
+
+<!-- NEW -->
+<div class="src"><div class="grow"><div class="nm">Hansard — Senate</div><div class="meta">Checked 06:03 · new docs 06:03</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Hansard Senate')" title="Re-fetch now">↻</button></div>
+
+<!-- NEW -->
+<div class="src"><div class="grow"><div class="nm">Senate Bills</div><div class="meta">Checked 06:03 · new docs 06:03</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Senate Bills')" title="Re-fetch now">↻</button></div>
+
+<!-- NEW -->
+<div class="src"><div class="grow"><div class="nm">National Assembly Bills</div><div class="meta">Checked 06:03 · new docs 06:03</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'NA Bills')" title="Re-fetch now">↻</button></div>
+
+<!-- NEW -->
+<div class="src"><div class="grow"><div class="nm">Parliamentary Statement Tracker</div><div class="meta">Checked 06:03 · nothing new for 2 days</div></div><span class="badge stale">Stale</span><button class="refetch" onclick="refetch(this,'Statement Tracker')" title="Re-fetch now">↻</button></div>
+
+<!-- NEW — Auditor General has 4 sub-feeds, show as one row -->
+<div class="src"><div class="grow"><div class="nm">Auditor General Reports</div><div class="meta">4 feeds · national, county, specialised, special · Checked 06:04</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'Auditor General')" title="Re-fetch now">↻</button></div>
+
+<!-- EXISTING — keep your down-state logic exactly as is -->
+<div class="src"><div class="grow"><div class="nm">ODPP</div><div class="meta">Checked 06:03 · new docs 06:03</div></div><span class="badge ok">Fresh</span><button class="refetch" onclick="refetch(this,'ODPP')" title="Re-fetch now">↻</button></div>
+
+<div class="src" id="odpcRow"><div class="grow"><div class="nm">ODPC Determinations</div><div class="meta" id="odpcMeta">Unreachable since 04:10 · retry 08:30</div></div><span class="badge down" id="odpcBadge">Down</span><button class="refetch" onclick="retryODPC(this)" title="Retry now">↻</button></div>
+        <div class="sc-note">Switching a source off skips it on the next run; its history stays.</div>
+      </div>
+    </div>
+    <div class="set-card">
+      <div class="sc-h">Checklist wording (the ladder's human levels)</div>
+      <div class="sc-b">
+        <textarea>Level 3 — Names, dates & attribution: authority, deadlines, locations confirmed against the source.
+Level 4 — Corroboration: a second document or record supports the lead.
+Level 5 — Legal & ethics: court orders, sub judice, fairness in naming, data protection.</textarea>
+        <div class="sc-note">These lines appear on every card. Plain newsroom words only.</div>
+        <button class="savebtn" onclick="toast('Checklist wording saved · cards update immediately')">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"><span id="toastMsg">Saved</span><button id="toastUndo" style="display:none" onclick="undo()">Undo</button></div>
+<div class="overlay" id="addModal" onclick="if(event.target===this)closeModal('addModal')">
+  <div class="modal">
+    <h3>Add a document by link</h3>
+    <p>Paste a link to any official document the scrapers missed, or one that appeared only on social media. It runs through the same pipeline as everything else: fetched, frozen, extracted, summarised, verified.</p>
+    <input type="text" placeholder="https://…" id="addUrl">
+    <div class="mfoot">
+      <button class="btn" onclick="closeModal('addModal')">Cancel</button>
+      <button class="savebtn" onclick="closeModal('addModal');toast('Document queued · it will appear as a lead when the pipeline finishes (about 2 minutes)')">Run it through the pipeline</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="tourModal" onclick="if(event.target===this)closeModal('tourModal')">
+  <div class="modal">
+    <h3>Welcome to DatabAIz</h3>
+    <p>The tool reads Kenya's official record every morning and turns it into story leads. Your job takes three moves:</p>
+    <div class="tour-step"><span class="tour-n">1</span><div><div class="ts-t">Read a card</div><div class="ts-d">Each lead has a summary, an exact quote already verified against the document, the legal flags, and a link to the original. Amber panels on the left show which sources are healthy.</div></div></div>
+    <div class="tour-step"><span class="tour-n">2</span><div><div class="ts-t">Climb the ladder</div><div class="ts-d">Levels 1–2 were checked automatically. Open levels 3, 4 and 5 on the right of a card and tick them as you verify. The glowing level on the first card is where to start.</div></div></div>
+    <div class="tour-step"><span class="tour-n">3</span><div><div class="ts-t">Decide</div><div class="ts-d">Docket it, Hold it, Dismiss it, or, once all five levels clear, Assign it to a reporter. Docketed items land in the Docket tab. Nothing can be assigned unverified: that is the whole point.</div></div></div>
+    <div class="kbd-row"><kbd>J</kbd> / <kbd>K</kbd> move between leads · <kbd>D</kbd> docket · <kbd>H</kbd> hold · <kbd>X</kbd> dismiss · <kbd>?</kbd> reopen this guide</div>
+    <div class="mfoot"><button class="savebtn" onclick="closeModal('tourModal')">Start triaging</button></div>
+  </div>
+</div>
+<script>
+const TITLES = {};
+const META = {};
+let status = {};
+let lastAction = null;
+let toastTimer;
+function toast(msg, undoable){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastUndo').style.display = undoable?'inline':'none';
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'), undoable?4200:2400);
+}
+function undo(){
+  if(!lastAction) return;
+  status[lastAction.n]=lastAction.prev;
+  paintStatus(lastAction.n);
+  toast('Undone · back to '+labelFor(lastAction.prev));
+  lastAction=null;
+  renderDocket(); applyFilters();
+}
+function go(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
+  document.getElementById('page-'+p).classList.add('on');
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x.dataset.page===p));
+  if(p==='docket') renderDocket();
+  window.scrollTo({top:0});
+}
+function jumpTo(id){
+  go('digest');
+  setTimeout(()=>{
+    const el=document.getElementById(id);
+    if(!el){toast('That lead is not in the current digest');return;}
+    el.classList.remove('hidden');
+    el.scrollIntoView({block:'center',behavior:'smooth'});
+    select(leads.indexOf(el));
+  },60);
+}
+function refetch(btn,name){
+  btn.classList.remove('spin'); void btn.offsetWidth; btn.classList.add('spin');
+  toast('Re-fetching '+name+'… nothing new since 06:02');
+}
+function retryODPC(btn){
+  btn.classList.remove('spin'); void btn.offsetWidth; btn.classList.add('spin');
+  setTimeout(()=>{
+    document.getElementById('odpcBadge').className='badge ok';
+    document.getElementById('odpcBadge').textContent='Fresh';
+    document.getElementById('odpcMeta').textContent='Back online · checked just now · 1 new document';
+    toast('ODPC is back · 1 new statement fetched and queued for the pipeline');
+  },800);
+}
+function flip(sw,name){
+  sw.classList.toggle('on');
+  toast(name+(sw.classList.contains('on')?' switched on · included from the next run':' switched off · skipped on the next run'));
+}
+function fold(h){ h.parentElement.classList.toggle('open'); h.parentElement.classList.remove('pulse'); }
+function ladder(n){
+  const fc=document.querySelector('.fc[data-lead="'+n+'"]');
+  const humans=fc.querySelectorAll('.lvl[data-human]');
+  const flagged=fc.querySelector('.lvl.flagged');
+  let cleared=fc.querySelectorAll('.lvl.cleared:not([data-human])').length;
+  humans.forEach(lv=>{
+    const done=[...lv.querySelectorAll('input')].every(x=>x.checked);
+    lv.classList.toggle('cleared',done);
+    if(done)cleared++;
+  });
+  const total=5, blocked=!!flagged;
+  const score=document.getElementById('score'+n);
+  score.textContent = blocked? cleared+' / 5 · flagged' : cleared+' / 5 cleared';
+  score.classList.toggle('pass', cleared===total && !blocked);
+  const all=(cleared===total)&&!blocked;
+  const a=document.getElementById('assign'+n), g=document.getElementById('gate'+n);
+  a.disabled=!all;
+  a.textContent=all?'Assign':'Assign (locked)';
+  if(blocked){ g.textContent='Level 2 flagged: verify the figure before assigning'; g.style.color='var(--red)'; }
+  else if(all){ g.textContent='All five levels cleared. Assign is open.'; g.style.color='var(--green)'; toast('Ladder cleared on "'+TITLES[n].slice(0,40)+'…" · Assign unlocked'); }
+  else { g.textContent='Complete levels 3–5 to unlock Assign'; g.style.color='var(--accent-ink)'; }
+}
+function resolveFlag(n){
+  const lv=document.getElementById('l'+n+'flag');
+  lv.classList.remove('flagged'); lv.classList.add('cleared');
+  document.getElementById('l'+n+'st').className='st auto'; document.getElementById('l'+n+'st').textContent='Resolved by you';
+  document.getElementById('l'+n+'body').innerHTML='Flag checked against the stored source by the editor. Logged: resolved, with your name and the time.';
+  document.getElementById('fcnote'+n).textContent='Flag resolved. Now tick levels 3–5 to unlock Assign.';
+  toast('Flag resolved · logged with your name at '+new Date().toLocaleTimeString().slice(0,5));
+  ladder(n);
+}
+function labelFor(s){return {new:'New',docket:'In docket',hold:'On hold',dismissed:'Dismissed',assigned:'Assigned'}[s];}
+function paintStatus(n){
+  const chip=document.getElementById('chip'+n);
+  const s=status[n];
+  if(s==='new'){chip.className='status-chip';chip.textContent='';}
+  else{chip.className='status-chip show '+s;chip.textContent=labelFor(s);}
+}
+function setStatus(n,s){
+  lastAction={n,prev:status[n]};
+  status[n]=s; paintStatus(n);
+  const extra = s==='assigned' ? ' · a house-style brief goes to the reporter' : (s==='docket'?' · find it in the Docket tab':'');
+  toast(labelFor(s)+': "'+TITLES[n].slice(0,44)+'…"'+extra, true);
+  renderDocket(); applyFilters(); updateBub();
+}
+function updateBub(){
+  const c=Object.values(status).filter(s=>s!=='new'&&s!=='dismissed').length;
+  const b=document.getElementById('dockBub');
+  b.textContent=c; b.classList.toggle('show',c>0);
+}
+function renderDocket(){
+  const groups={docket:'In docket',assigned:'Assigned',hold:'On hold',dismissed:'Dismissed'};
+  let html='';
+  for(const [key,label] of Object.entries(groups)){
+    const items=Object.keys(status).filter(n=>status[n]===key);
+    if(!items.length) continue;
+    html+='<div class="dock-group"><div class="dock-h">'+label+'<span class="cnt">'+items.length+'</span></div>';
+    items.forEach(n=>{
+      html+='<div class="dock-item"><div class="dt"><div class="t">'+TITLES[n]+'</div><div class="m">'+META[n]+' · moved just now by you</div></div>'+
+            '<button class="btn" onclick="jumpTo(\'lead'+n+'\')">Open card</button>'+
+            '<button class="btn" onclick="setStatus('+n+',\'new\')">Return to digest</button></div>';
+    });
+    html+='</div>';
+  }
+  document.getElementById('dockBody').innerHTML = html ||
+    '<div class="dock-empty"><b>The docket is empty.</b><br>Back in the Digest, press <b>Docket</b> on any lead (or the D key) and it will appear here, grouped by status.</div>';
+  updateBub();
+}
+let leads=[];
+function applyFilters(){
+  const cat=document.getElementById('fCat').value, src=document.getElementById('fSrc').value,
+        sev=document.getElementById('fSev').value, st=document.getElementById('fStat').value,
+        q=document.getElementById('fSearch').value.trim().toLowerCase();
+  let shown=0;
+  leads.forEach(el=>{
+    const n=+el.id.slice(4);
+    const ok=(!cat||el.dataset.cat===cat)&&(!src||el.dataset.src===src)&&(!sev||el.dataset.sev===sev)
+           &&(!st||status[n]===st)&&(!q||el.dataset.search.includes(q));
+    el.classList.toggle('hidden',!ok);
+    if(ok){shown++;}
+  });
+  document.getElementById('statNew').textContent=shown;
+  document.getElementById('statAwait').textContent=leads.filter(el=>{const k=+el.id.slice(4);return !el.classList.contains('hidden')&&document.getElementById('assign'+k).disabled&&status[k]==='new';}).length;
+  document.getElementById('emptyMsg').classList.toggle('show',shown===0);
+}
+let sel=-1;
+function select(i){
+  const vis=leads.filter(l=>!l.classList.contains('hidden'));
+  if(!vis.length) return;
+  if(sel>=0&&leads[sel]) leads[sel].classList.remove('sel');
+  i=Math.max(0,Math.min(vis.length-1,i));
+  const el=vis[i]; sel=leads.indexOf(el);
+  el.classList.add('sel');
+  el.scrollIntoView({block:'center',behavior:'smooth'});
+}
+document.addEventListener('keydown',e=>{
+  if(e.target.matches('input,select,textarea'))return;
+  const k=e.key.toLowerCase();
+  const visIdx=leads.filter(l=>!l.classList.contains('hidden')).indexOf(leads[sel]);
+  if(k==='j')select(visIdx+1);
+  else if(k==='k')select(visIdx-1);
+  else if(k==='?')openTour();
+  else if(sel>=0){
+    const n=+leads[sel].id.slice(4);
+    if(k==='d')setStatus(n,'docket');
+    else if(k==='h')setStatus(n,'hold');
+    else if(k==='x')setStatus(n,'dismissed');
+  }
+});
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+function openTour(){openModal('tourModal');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('addModal');closeModal('tourModal');}});
+
+/* ───────── Supabase: live leads ───────── */
+const SUPABASE_URL = 'https://zlnpthioxonfibhnaqzr.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_bXNSrs16HqKZjZk0Bxzj-Q_hOEJuA-R';
+const sb = window.supabase.createClient(SUPABASE_URL.trim(), SUPABASE_ANON_KEY.trim());
+
+/* Column map: first matching column name in the pitch_sheets row wins. Edit to match your schema. */
+const COLS = {
+  headline:['headline','title'],
+  summary:['summary','lede','body'],
+  source:['source','source_name'],
+  category:['category','topic'],
+  severity:['severity','priority'],
+  quote:['verbatim_quote','quote','verbatim_extract'],
+  quoteRef:['quote_ref','quote_reference','page_ref'],
+  angles:['angles','suggested_angles','angle'],
+  followups:['follow_ups','followups','follow_up_questions'],
+  ethics:['ethics_flags','legal_flags','ethics','legal_notes'],
+  url:['source_url','url','primary_source_url'],
+  snapshot:['snapshot_url'],
+  docRef:['document_ref','issue_ref','source_label'],
+  model:['model','llm_model'],
+  prompt:['prompt_version'],
+  flag:['verification_flag','flag_reason','extraction_flag'],
+  related:['related_count','related_leads']
+};
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function pick(r,keys){ for(const k of keys){ if(r[k]!==undefined&&r[k]!==null&&r[k]!=='') return r[k]; } return null; }
+function parseMaybe(v){ if(typeof v==='string'){ const t=v.trim(); if(t[0]==='{'||t[0]==='['){ try{return JSON.parse(t);}catch(e){} } } return v; }
+function toList(v){
+  v=parseMaybe(v);
+  if(v==null) return [];
+  if(Array.isArray(v)) return v.map(x=>typeof x==='string'?x:(x&&(x.text||x.question||x.title))||JSON.stringify(x));
+  if(typeof v==='object') return Object.values(v).map(String);
+  return String(v).split(/\n+/).map(s=>s.replace(/^[-•*]\s*/,'').trim()).filter(Boolean);
+}
+function fmtDate(v){
+  const d=new Date(v); if(isNaN(d)) return '';
+  return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+}
+function fmtTime(v){
+  const d=new Date(v); if(isNaN(d)) return '';
+  return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+function humanLevel(num,title,items){
+  return '<div class="lvl" data-human><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">'+num+'</span><span class="lvl-t">'+title+'</span><span class="st human">Your check</span></div>'+
+    '<div class="lvl-b">'+items.map(t=>'<label><input type="checkbox" onchange="ladder(__N__)"> '+t+'</label>').join('')+'</div></div>';
+}
+function anglesHtml(raw){
+  let v=parseMaybe(raw); if(v==null||v==='') return '';
+  let main='', rest=[];
+  if(v&&typeof v==='object'&&!Array.isArray(v)){
+    const keys=Object.keys(v); const mk=keys.find(k=>/breaking|main|primary/i.test(k))||keys[0];
+    main=v[mk]; keys.filter(k=>k!==mk).forEach(k=>rest.push('<b>'+esc(k.charAt(0).toUpperCase()+k.slice(1))+':</b> '+esc(v[k])));
+    main=esc(Array.isArray(main)?main.join(' '):main);
+  } else {
+    const l=toList(v); main=esc(l[0]||''); rest=l.slice(1).map(esc);
+  }
+  return '<div class="eyebrow">Suggested angle</div>'+
+    '<details class="fold" open><summary>Lead angle</summary><div class="fb">'+main+'</div></details>'+
+    (rest.length?'<details class="fold"><summary>More angles</summary><div class="fb"><ul>'+rest.map(x=>'<li>'+x+'</li>').join('')+'</ul></div></details>':'');
+}
+function buildCard(row,n){
+  const g=k=>pick(row,COLS[k]);
+  const headline=g('headline')||'(untitled lead)';
+  const summary=g('summary');
+  const source=String(g('source')||'Unknown');
+  const cat=String(g('category')||'Uncategorised');
+  let sev=String(g('severity')||'Medium'); sev=sev.charAt(0).toUpperCase()+sev.slice(1).toLowerCase();
+  const sevCls=sev==='High'?'hi':'md';
+  const flag=g('flag'); const flagged=!!flag;
+  const docRef=g('docRef'); const when=[docRef, row.processed_at?fmtDate(row.processed_at):''].filter(Boolean).join(' · ');
+  const quote=g('quote'), qref=g('quoteRef');
+  const url=g('url'), snap=g('snapshot');
+  const safeUrl=u=>/^https?:\/\//i.test(String(u))?esc(u):'#';
+  const fups=toList(g('followups'));
+  const ethics=toList(g('ethics'));
+  const related=parseInt(g('related'),10);
+  const searchBlob=Object.values(row).filter(v=>typeof v==='string'||typeof v==='number').join(' ').toLowerCase();
+
+  TITLES[n]=String(headline).length>60?String(headline).slice(0,60):String(headline);
+  META[n]=source+' · '+cat+' · '+sev;
+  status[n]='new';
+
+  const prov=[];
+  if(row.processed_at) prov.push('<tr><td>Processed</td><td><b>'+esc(fmtTime(row.processed_at))+'</b> on '+esc(fmtDate(row.processed_at))+'</td></tr>');
+  if(url) prov.push('<tr><td>Source</td><td><a href="'+safeUrl(url)+'" target="_blank" rel="noopener" style="color:var(--accent-ink)">'+esc(url)+'</a></td></tr>');
+  if(g('model')||g('prompt')) prov.push('<tr><td>Summary by</td><td>'+esc([g('model')?'Model '+g('model'):'',g('prompt')?'prompt '+g('prompt'):''].filter(Boolean).join(' · '))+'</td></tr>');
+  if(snap) prov.push('<tr><td>Snapshot</td><td><a href="'+safeUrl(snap)+'" target="_blank" rel="noopener" style="color:var(--accent-ink)">Stored copy as fetched</a></td></tr>');
+  if(row.id!==undefined) prov.push('<tr><td>Record</td><td>pitch_sheets #'+esc(row.id)+'</td></tr>');
+
+  const lvl2 = flagged
+    ? '<div class="lvl flagged open" id="l'+n+'flag"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">2</span><span class="lvl-t">Extraction is verbatim</span><span class="st fail" id="l'+n+'st">Auto · flagged</span></div>'+
+      '<div class="lvl-b" id="l'+n+'body"><b style="color:var(--red)">'+esc(flag)+'</b> Open the source, check it with your own eyes, then resolve.<br><button class="resolve" onclick="resolveFlag('+n+')">I checked the source: it is correct → resolve flag</button></div></div>'
+    : '<div class="lvl cleared"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">2</span><span class="lvl-t">Extraction is verbatim</span><span class="st auto">Auto · passed</span></div><div class="lvl-b">No extraction flag was raised by the pipeline for this lead.</div></div>';
+
+  const human = [
+    humanLevel(3,'Names, dates &amp; attribution',['Names, titles and issuing authority match the source','Dates, deadlines and figures read correctly','Location and court / county details correct']),
+    humanLevel(4,'Corroboration',['A second document or record supports the lead']),
+    humanLevel(5,'Legal &amp; ethics clearance',['No court order restricting publication','Naming individuals is fair and necessary','Sub judice and fair-trial rules considered'])
+  ].join('').replace(/__N__/g,n);
+  const human3 = n===1 ? human.replace('<div class="lvl" data-human>','<div class="lvl open pulse" data-human>') : human;
+
+  const html =
+  '<div class="lead" id="lead'+n+'" tabindex="0" data-rowid="'+esc(row.id)+'" data-cat="'+esc(cat)+'" data-src="'+esc(source)+'" data-sev="'+esc(sev)+'" data-status="new" data-search="'+esc(searchBlob)+'">'+
+    '<div class="lead-top">'+
+      '<span class="tag src-t">'+esc(source)+'</span><span class="tag cat">'+esc(cat)+'</span><span class="tag '+sevCls+'">'+esc(sev)+'</span>'+
+      (related>0?'<span class="tag cluster" onclick="go(\'timelines\')" title="See related leads">Related: '+related+' earlier leads →</span>':'')+
+      '<span class="status-chip" id="chip'+n+'"></span>'+
+      '<span class="when">'+esc(when)+'</span>'+
+    '</div>'+
+    '<div class="lead-body"><div>'+
+      '<h2>'+esc(headline)+'</h2>'+
+      (summary?'<p class="summary">'+esc(summary)+'</p>':'')+
+      (quote?'<div class="eyebrow">Verbatim extract</div><div class="quote">"'+esc(quote)+'"'+(qref?'<span class="ref">'+esc(qref)+'</span>':'')+'</div>':'')+
+      anglesHtml(g('angles'))+
+      (fups.length?'<details class="fold"><summary>Follow-up questions</summary><div class="fb"><ul>'+fups.map(f=>'<li>'+esc(f)+'</li>').join('')+'</ul></div></details>':'')+
+      (ethics.length?'<div class="eyebrow">Ethics &amp; legal flags</div><p class="summary" style="margin-bottom:0">'+ethics.map(esc).join(' ')+'</p>':'')+
+      (url?'<div class="srcline">Primary source: <a href="'+safeUrl(url)+'" target="_blank" rel="noopener">'+esc(url)+'</a></div>':'')+
+      (prov.length?'<details class="prov"><summary>Provenance: where this lead came from</summary><div class="pb"><table>'+prov.join('')+'</table></div></details>':'')+
+    '</div>'+
+    '<div class="fc" data-lead="'+n+'">'+
+      '<div class="fc-h"><span class="t">Fact-check ladder</span><span class="fc-score" id="score'+n+'">'+(flagged?'1 / 5 · flagged':'2 / 5 cleared')+'</span></div>'+
+      '<div class="lvl cleared"><div class="lvl-h" onclick="fold(this)"><span class="lvl-n">1</span><span class="lvl-t">Source exists &amp; matches</span><span class="st auto">Auto · passed</span></div><div class="lvl-b">Lead was fetched and processed'+(row.processed_at?' on '+esc(fmtDate(row.processed_at))+' at '+esc(fmtTime(row.processed_at)):'')+'.</div></div>'+
+      lvl2+human3+
+      '<div class="fc-note" id="fcnote'+n+'">Levels 1–2 ran automatically. Levels 3–5 are yours: open each and tick. <b>Assign unlocks at 5 / 5.</b></div>'+
+    '</div></div>'+
+    '<div class="actions">'+
+      '<button class="btn" onclick="setStatus('+n+',\'docket\')"><u>D</u>ocket</button>'+
+      '<button class="btn" onclick="setStatus('+n+',\'hold\')"><u>H</u>old</button>'+
+      '<button class="btn" onclick="setStatus('+n+',\'dismissed\')">Dismiss (<u>X</u>)</button>'+
+      '<button class="btn assign" id="assign'+n+'" disabled onclick="setStatus('+n+',\'assigned\')">Assign (locked)</button>'+
+      '<span class="gate" id="gate'+n+'">'+(flagged?'Level 2 flagged: verify before assigning':'Complete levels 3–5 to unlock Assign')+'</span>'+
+    '</div>'+
+    '<div class="ai-label">AI-generated summary from the primary document. Verify against the source before assigning.</div>'+
+  '</div>';
+  return html;
+}
+function ensureOptions(selId,values){
+  const s=document.getElementById(selId);
+  const have=new Set([...s.options].map(o=>o.value||o.text));
+  [...new Set(values)].filter(v=>v&&!have.has(v)).sort().forEach(v=>{const o=document.createElement('option');o.textContent=v;s.appendChild(o);});
+}
+function renderQueue(){
+  const q=document.getElementById('queueList');
+  const pri=leads.map(el=>{const n=+el.id.slice(4);return {n,flag:!!el.querySelector('.lvl.flagged'),high:el.dataset.sev==='High'};})
+    .filter(x=>x.flag||x.high).slice(0,5);
+  q.innerHTML=pri.length?pri.map(x=>'<div class="qitem" onclick="jumpTo(\'lead'+x.n+'\')"><div class="qt">'+esc(TITLES[x.n])+'</div><div class="qm">'+(x.flag?'<b>Level 2 flagged</b> · verify first':'<b>High severity</b> · '+esc(META[x.n]))+'</div></div>').join('')
+    :'<div class="qitem"><div class="qt">Nothing flagged or high-severity.</div></div>';
+}
+function showLeadsMessage(html){
+  document.getElementById('leadsContainer').innerHTML='<div class="empty show">'+html+'</div>';
+  document.getElementById('statNew').textContent=0; document.getElementById('statAwait').textContent=0;
+  document.getElementById('queueList').innerHTML='<div class="qitem"><div class="qt">No leads loaded.</div></div>';
+}
+async function loadLeads(){
+  const box=document.getElementById('leadsContainer');
+  box.innerHTML='<div class="empty show">Loading leads…</div>';
+  try{
+    const {data,error}=await sb.from('pitch_sheets').select('*').order('processed_at',{ascending:false}).limit(50);
+    if(error) throw error;
+    if(!data||!data.length){ leads=[]; showLeadsMessage('<b>No leads yet.</b> The pitch_sheets table returned no rows.'); renderDocket(); return; }
+    Object.keys(TITLES).forEach(k=>delete TITLES[k]); Object.keys(META).forEach(k=>delete META[k]); status={};
+    box.innerHTML=data.map((row,i)=>buildCard(row,i+1)).join('');
+    leads=[...document.querySelectorAll('.lead')];
+    sel=-1;
+    ensureOptions('fCat',leads.map(l=>l.dataset.cat));
+    ensureOptions('fSrc',leads.map(l=>l.dataset.src));
+    ensureOptions('fSev',leads.map(l=>l.dataset.sev));
+    renderQueue(); renderDocket(); applyFilters();
+  }catch(err){
+    console.error('Supabase load failed',err);
+    leads=[];
+    showLeadsMessage('<b>Could not load leads.</b> '+esc(err&&err.message?err.message:err)+'<br>Check the project URL, the key and that the table allows reads (RLS policy).');
+    toast('Could not load leads from Supabase');
+  }
+}
+
+renderDocket();
+loadLeads();
+setTimeout(openTour, 500);
+</script>
+</body>
+</html>
