@@ -1,0 +1,213 @@
+# config/sources.yaml — DatabAIz sources & schedule
+# Switching a source off (enabled: false) skips it on the next run; its history stays.
+
+version: 1
+timezone: Africa/Nairobi
+
+schedule:
+  runs: ["06:00", "14:00"]        # daily pipeline runs
+
+defaults:
+  enabled: true
+  schedule: daily
+  fetch:
+    timeout_seconds: 60
+    retries: 3
+    retry_backoff_minutes: 30
+    user_agent: "DatabAIz/1.0"
+  snapshot:
+    store: true                   # frozen copy exactly as fetched
+    checksum: sha256              # re-verified on live check
+  extraction:
+    prefer: native_text           # native PDF/page text first
+    ocr_fallback: true
+    flag_unreadable_images: true  # triggers Level 2 flag if a figure isn't in the text
+  health:
+    stale_after_days: 2           # "Stale" badge when nothing new
+    down_after_failures: 3        # "Down" badge when unreachable
+  manual_add: true                # "Add a document by link" uses the same pipeline
+
+sources:
+  # 1
+  - id: kenya_law
+    name: "Kenya Law — Judgments & Regional Courts"
+    filter_label: "Kenya Law"
+    default_category: Courts
+    enabled: true
+    feeds:
+      - id: judgments
+        url: "https://new.kenyalaw.org/judgments/"
+        format: html
+      - id: regional_courts
+        url: "https://new.kenyalaw.org/judgments/RC/"
+        format: html
+      - id: cause_lists
+        url: "https://kenyalaw.org/causelists/"      # path from mockup — verify
+        format: html
+    entity_keys: [case_number, court_station]
+
+  # 2
+  - id: kenya_gazette
+    name: "Kenya Gazette"
+    filter_label: "Gazette"
+    default_category: null        # assigned per lead (e.g. Land)
+    enabled: true
+    feeds:
+      - id: gazettes
+        url: "https://kenyalaw.org/gazettes/"        # path from mockup — verify
+        format: pdf
+    entity_keys: [gazette_volume, gazette_number, notice_number]
+
+  # 3
+  - id: hansard_na
+    name: "Hansard — National Assembly"
+    filter_label: "Hansard NA"
+    default_category: Parliament
+    enabled: true
+    feeds:
+      - id: hansard
+        url: "https://hansardna.parliament.go.ke/"
+        format: pdf
+    entity_keys: [sitting_date, member_name]
+
+  # 4
+  - id: hansard_senate
+    name: "Hansard — Senate"
+    filter_label: "Hansard Senate"
+    default_category: Parliament
+    enabled: true
+    feeds:
+      - id: hansard
+        url: "https://hansardsn.parliament.go.ke/"
+        format: pdf
+    entity_keys: [sitting_date, member_name]
+
+  # 5
+  - id: senate_bills
+    name: "Senate Bills"
+    filter_label: "Senate Bills"
+    default_category: Legislation
+    enabled: true
+    feeds:
+      - id: bills
+        url: "https://www.parliament.go.ke/the-senate/house-business"   # Bills section of this page
+        format: pdf
+    entity_keys: [bill_number, bill_title]
+
+  # 6
+  - id: na_bills
+    name: "National Assembly Bills"
+    filter_label: "NA Bills"
+    default_category: Legislation
+    enabled: true
+    feeds:
+      - id: bill_tracker
+        url: "https://www.parliament.go.ke/the-national-assembly/house-business/bill-tracker"
+        format: pdf
+      - id: bills
+        url: "https://www.parliament.go.ke/the-national-assembly/house-business/bill-tracker"               # NA bills listing page
+        format: pdf
+    entity_keys: [bill_number, bill_title]
+
+  # 7
+  - id: statement_tracker
+    name: "Parliamentary Statement Tracker"
+    filter_label: "Statement Tracker"
+    default_category: Parliament
+    enabled: true
+    feeds:
+      - id: statements
+        url: "https://www.parliament.go.ke/the-national-assembly/house-business/statement-tracker"
+        format: pdf
+    entity_keys: [statement_number, member_name]
+
+  # 8
+  - id: ag_national
+    name: "Auditor General — National Govt"
+    filter_label: "Auditor General"
+    group: auditor_general        # shown as one row in Settings
+    default_category: "Public Finance"
+    enabled: true
+    feeds:
+      - id: national
+        url: "https://www.oagkenya.go.ke/2024-2025-ministries-departments-and-agencies-reports/"  # year-specific; update each FY
+        format: pdf
+    entity_keys: [entity_name, financial_year]
+
+  # 9
+  - id: ag_counties
+    name: "Auditor General — Counties"
+    filter_label: "Auditor General"
+    group: auditor_general
+    default_category: "Public Finance"
+    enabled: true
+    feeds:
+      - id: counties
+        url: "https://www.oagkenya.go.ke/national-government-audit-reports/"
+        format: pdf
+    entity_keys: [county_name, financial_year]
+
+  # 10
+  - id: ag_special
+    name: "Auditor General — Specialised & Special"
+    filter_label: "Auditor General"
+    group: auditor_general
+    default_category: "Public Finance"
+    enabled: true
+    feeds:
+      - id: specialised
+        url: "https://www.oagkenya.go.ke/special-audit-report/"
+        format: pdf
+      - id: special
+        url: "https://www.oagkenya.go.ke/special-audit-report/"
+        format: pdf
+    entity_keys: [entity_name, report_title]
+
+  # 11
+  - id: odpp
+    name: "ODPP"
+    filter_label: "ODPP"
+    default_category: Prosecutions
+    enabled: true
+    feeds:
+      - id: press
+        url: "https://odpp.go.ke/press/"             # path from mockup — verify
+        format: html
+        capture_images: true      # statements may embed figures in images
+    entity_keys: [case_number, accused_name]
+
+  # 12
+  - id: odpc
+    name: "ODPC Determinations"
+    filter_label: "ODPC"
+    default_category: "Data Protection"
+    enabled: true
+    feeds:
+      - id: determinations
+        url: "https://www.odpc.go.ke/determinations/"   # index; links to per-year pages
+        format: pdf
+    entity_keys: [complaint_number, respondent_name]
+
+  # 13
+  - id: cob_national_birr
+    name: "Controller of Budget — National Government Budget Implementation Review Reports"
+    filter_label: "Controller of Budget"
+    default_category: "Public Finance"
+    enabled: true
+    feeds:
+      - id: national_birr
+        url: "https://cob.go.ke/reports/national-government-budget-implementation-review-reports/"
+        format: pdf               # assumed — confirm
+    entity_keys: [entity_name, financial_year, reporting_period]
+
+  # 14
+  - id: knbs_reports
+    name: "KNBS — All Reports"
+    filter_label: "KNBS"
+    default_category: Statistics  # new category — not in the mockup's filter
+    enabled: true
+    feeds:
+      - id: all_reports
+        url: "https://www.knbs.or.ke/all-reports/"
+        format: pdf               # assumed — confirm
+    entity_keys: [report_title, publication_date]
